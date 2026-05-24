@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "powtv-new",
-    "slug": "powtv-new",
+    "name": "powtv",
+    "slug": "powtv",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "powtvnew",
+    "scheme": "powtv",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.powtv.app",
       "icon": "./assets/expo.icon"
     },
     "android": {
