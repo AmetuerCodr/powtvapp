@@ -4,9 +4,9 @@ import { Link } from "expo-router";
 
 export default function Profile(){
   return (
-    <View className="flex-1 items-center justify-center">
+    <View>
       <Text>Profile</Text>
-      <Link href={"/"}> go to index</Link>
+      <Link href={"/"}> go home</Link>
   </View>
   )
 }

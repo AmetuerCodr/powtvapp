@@ -1,11 +1,15 @@
-import { Link } from "expo-router";
-import { Text, View } from "react-native";
+import { Link, useRouter } from 'expo-router';
+import { Text, View, Button } from 'react-native';
+import { Layout, Typography } from '@/styles';
+
+
 
 export default function ExploreScreen() {
+  const router = useRouter()
   return (
-    <View className="justify-center">
-      <Text>explore</Text>
-      <Link href="/">Go to index</Link>
+    <View>
+      <Text >explore</Text>
+      <Link href="/" push>Go to index</Link>
     </View>
   );
 }
