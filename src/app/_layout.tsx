@@ -9,14 +9,14 @@ export default function AppTabs() {
   return (
     <Tabs
       screenOptions={{
-
         tabBarActiveTintColor: "#FFFFFF",
         tabBarInactiveTintColor: "#6B7280",
         tabBarStyle: {
-          backgroundColor: "#1A1A1A",
+          backgroundColor: "#18181B",
           borderTopWidth: 0,
         },
-        headerStyle: { backgroundColor: "#1A1A1A" },
+        // headerStyle: { backgroundColor: "#18181B" },
+        headerShown: false,
         headerTintColor: "#FFFFFF",
       }}
     >
@@ -24,11 +24,12 @@ export default function AppTabs() {
         name="index"
         options={{
           title: "Home",
+          tabBarStyle: { display: "none" },
           tabBarIcon: ({ color, size }) => (
             <Home width={size} height={size} color={color} />
           ),
         }}
-      />r
+      />
       <Tabs.Screen
         name="search"
         options={{
