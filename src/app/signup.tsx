@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Pressable,
+  Alert,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -16,8 +17,8 @@ import {
   Sora_600SemiBold,
   Sora_700Bold,
 } from "@expo-google-fonts/sora";
-import { Link } from "expo-router";
 
+import { Link } from "expo-router";
 const image = require("../../assets/images/sign-in.png");
 const logo = require("../../assets/images/pow-tv-fulllogo.png");
 
@@ -46,22 +47,22 @@ export default function SignInScreen() {
 
         {/* Card */}
         <View style={s.card}>
-          <Text style={s.welcomeBack}>WELCOME BACK</Text>
-          <Text style={s.signInTitle}>Sign In</Text>
-          <Text style={s.subtitle}>Continue your journey</Text>
+          <Text style={s.welcomeBack}>WELCOME IN</Text>
+          <Text style={s.signInTitle}>Sign Up</Text>
+          <Text style={s.subtitle}>Start your journey</Text>
 
-          {/* Email */}
+          {/* Full Name */}
           <View style={s.inputRow}>
             <MaterialCommunityIcons
-              name="email-outline"
+              name="account-box"
               size={20}
               color="rgba(255,255,255,0.5)"
               style={s.inputIcon}
             />
             <TextInput
-              placeholder="johndoe@example.com"
+              placeholder="John Doe"
               placeholderTextColor="rgba(255,255,255,0.4)"
-              keyboardType="email-address"
+              keyboardType="default"
               autoCapitalize="none"
               style={s.input}
             />
@@ -70,32 +71,18 @@ export default function SignInScreen() {
           {/* Password */}
           <View style={s.inputRow}>
             <MaterialCommunityIcons
-              name="lock-outline"
+              name="email"
               size={20}
               color="rgba(255,255,255,0.5)"
               style={s.inputIcon}
             />
             <TextInput
-              placeholder="password"
+              placeholder="email"
               placeholderTextColor="rgba(255,255,255,0.4)"
-              secureTextEntry={!showPassword}
+              keyboardType="email-address"
               style={[s.input, { flex: 1 }]}
             />
-            <Pressable
-              onPress={() => setShowPassword((v) => !v)}
-              style={s.eyeBtn}
-            >
-              <MaterialCommunityIcons
-                name={showPassword ? "eye-off-outline" : "eye-outline"}
-                size={20}
-                color="rgba(255,255,255,0.5)"
-              />
-            </Pressable>
-        
           </View>
-
-          {/* Forgot */}
-          <Text style={s.forgot}>Forgot Password</Text>
 
           {/* Continue */}
           <TouchableOpacity style={s.continueBtn} activeOpacity={0.85}>
@@ -103,13 +90,21 @@ export default function SignInScreen() {
           </TouchableOpacity>
 
           {/* Apple */}
-          <TouchableOpacity style={s.appleBtn} activeOpacity={0.85}>
+          <TouchableOpacity
+            onPress={() => Alert.alert("does not currently work yet!")}
+            style={s.appleBtn}
+            activeOpacity={0.85}
+          >
             <MaterialCommunityIcons name="apple" size={22} color="#000" />
             <Text style={s.appleBtnText}>Sign in with Apple</Text>
           </TouchableOpacity>
 
           {/* Google */}
-          <TouchableOpacity style={s.googleBtn} activeOpacity={0.85}>
+          <TouchableOpacity
+            onPress={() => Alert.alert("does not currently work yet!")}
+            style={s.googleBtn}
+            activeOpacity={0.85}
+          >
             <Text style={s.googleG}>G</Text>
             <Text style={s.googleBtnText}>Sign in with Google</Text>
           </TouchableOpacity>
@@ -117,9 +112,9 @@ export default function SignInScreen() {
 
         {/* Footer */}
         <View style={s.footer}>
-          <Text style={s.footerText}>New to PowTV? </Text>
+          <Text style={s.footerText}>Have an Account? </Text>
           <Pressable>
-            <Link href="/signup" style={s.footerLink}>Create an Account</Link>
+            <Link href="/" style={s.footerLink}>Sign In</Link>
           </Pressable>
         </View>
       </ImageBackground>
