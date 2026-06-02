@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useSession } from "@/context/auth";
 import {
   Text,
   View,
@@ -28,7 +29,11 @@ const INPUT_BG = "rgba(255,255,255,0.08)";
 const INPUT_BORDER = "rgba(255,255,255,0.18)";
 
 export default function SignInScreen() {
+  const { signUp } = useSession();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullname, setFullname] = useState("");
   const [fontsLoaded] = useFonts({
     Sora_400Regular,
     Sora_600SemiBold,
@@ -61,6 +66,8 @@ export default function SignInScreen() {
             />
             <TextInput
               placeholder="John Doe"
+              value={fullname}
+              onChangeText={(newFullName) => setFullname(newFullName)}
               placeholderTextColor="rgba(255,255,255,0.4)"
               keyboardType="default"
               autoCapitalize="none"
@@ -68,7 +75,7 @@ export default function SignInScreen() {
             />
           </View>
 
-          {/* Password */}
+          {/* Email */}
           <View style={s.inputRow}>
             <MaterialCommunityIcons
               name="email"
@@ -78,14 +85,50 @@ export default function SignInScreen() {
             />
             <TextInput
               placeholder="email"
+              value={email}
+              onChangeText={(newEmail) => setEmail(newEmail)}
               placeholderTextColor="rgba(255,255,255,0.4)"
               keyboardType="email-address"
               style={[s.input, { flex: 1 }]}
             />
           </View>
 
+          {/* Password */}
+          <View style={s.inputRow}>
+            <MaterialCommunityIcons
+              name="lock-outline"
+              size={20}
+              color="rgba(255,255,255,0.5)"
+              style={s.inputIcon}
+            />
+            <TextInput
+              placeholder="password"
+              value={password}
+              onChangeText={(newPassword) => setPassword(newPassword)}
+              placeholderTextColor="rgba(255,255,255,0.4)"
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              style={[s.input, { flex: 1 }]}
+            />
+            <Pressable
+              onPress={() => setShowPassword((v) => !v)}
+              style={s.eyeBtn}
+            >
+              <MaterialCommunityIcons
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                size={20}
+                color="rgba(255,255,255,0.5)"
+              />
+            </Pressable>
+          </View>
+
           {/* Continue */}
-          <TouchableOpacity style={s.continueBtn} activeOpacity={0.85}>
+
+          <TouchableOpacity
+            onPress={() => signUp(fullname, email, password)}
+            style={s.continueBtn}
+            activeOpacity={0.85}
+          >
             <Text style={s.continueBtnText}>Continue</Text>
           </TouchableOpacity>
 
@@ -114,7 +157,9 @@ export default function SignInScreen() {
         <View style={s.footer}>
           <Text style={s.footerText}>Have an Account?</Text>
           <Pressable>
-            <Link href="/" style={s.footerLink}>Sign In</Link>
+            <Link href="/" style={s.footerLink}>
+              Sign In
+            </Link>
           </Pressable>
         </View>
       </ImageBackground>

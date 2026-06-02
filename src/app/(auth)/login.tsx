@@ -28,8 +28,10 @@ const INPUT_BG = "rgba(255,255,255,0.08)";
 const INPUT_BORDER = "rgba(255,255,255,0.18)";
 
 export default function SignInScreen() {
-  const { signIn } = useSession();
+  const { logIn } = useSession();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [fontsLoaded] = useFonts({
     Sora_400Regular,
     Sora_600SemiBold,
@@ -64,6 +66,8 @@ export default function SignInScreen() {
             />
             <TextInput
               placeholder="johndoe@example.com"
+              value={email}
+              onChangeText={(newEmail) => setEmail(newEmail)}
               placeholderTextColor="rgba(255,255,255,0.4)"
               keyboardType="email-address"
               autoCapitalize="none"
@@ -81,6 +85,8 @@ export default function SignInScreen() {
             />
             <TextInput
               placeholder="password"
+              value={password}
+              onChangeText={(newPassword) => setPassword(newPassword)}
               placeholderTextColor="rgba(255,255,255,0.4)"
               secureTextEntry={!showPassword}
               style={[s.input, { flex: 1 }]}
@@ -104,7 +110,7 @@ export default function SignInScreen() {
           <TouchableOpacity
             style={s.continueBtn}
             activeOpacity={0.85}
-            onPress={() => signIn()}
+            onPress={() => logIn(email, password)}
           >
             <Text style={s.continueBtnText}>Continue</Text>
           </TouchableOpacity>
