@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { useSession } from "@/context/auth";
+import { supabase } from "../../../utils/supabase";
 import {
   Text,
   View,
@@ -12,6 +13,7 @@ import {
   Alert,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import {
   useFonts,
   Sora_400Regular,
@@ -41,6 +43,26 @@ export default function SignInScreen() {
   });
 
   if (!fontsLoaded) return null;
+  type Status = "idle" | "submitting" | "error";
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
+
+  async function handleLogin() {
+    setStatus("submitting");
+
+    const { error: err } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (err) {
+      setError(err instanceof Error ? err.message : "Failed");
+      setStatus("error");
+      return;
+    }
+
+    router.replace("/");
+  }
 
   return (
     <View style={s.container}>
