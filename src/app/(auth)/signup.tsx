@@ -47,12 +47,16 @@ export default function SignInScreen() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
-  async function handleSignup() {
+  async function handleSignUp(firstname: string, email: string, password: string) {
     setStatus("submitting");
-
-    const { error: err } = await supabase.auth.signInWithPassword({
+    const { error: err } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          first_name: firstname,
+        }
+      }
     });
 
     if (err) {
@@ -60,7 +64,6 @@ export default function SignInScreen() {
       setStatus("error");
       return;
     }
-
     router.replace("/");
   }
 
