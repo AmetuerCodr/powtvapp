@@ -19,8 +19,8 @@ import {
 } from "@expo-google-fonts/sora";
 
 import { Link } from "expo-router";
-const image = require("../../assets/images/sign-in.png");
-const logo = require("../../assets/images/pow-tv-fulllogo.png");
+const image = require("../../../assets/images/sign-in.png");
+const logo = require("../../../assets/images/pow-tv-fulllogo.png");
 
 const GOLD = "#E8A020";
 const CARD_BG = "rgba(45, 15, 38, 0.88)";
@@ -112,7 +112,7 @@ export default function SignInScreen() {
 
         {/* Footer */}
         <View style={s.footer}>
-          <Text style={s.footerText}>Have an Account? </Text>
+          <Text style={s.footerText}>Have an Account?</Text>
           <Pressable>
             <Link href="/" style={s.footerLink}>Sign In</Link>
           </Pressable>

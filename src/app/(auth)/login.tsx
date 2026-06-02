@@ -16,10 +16,11 @@ import {
   Sora_600SemiBold,
   Sora_700Bold,
 } from "@expo-google-fonts/sora";
-import { Link, Redirect } from "expo-router";
+import { Link } from "expo-router";
+import { useSession } from "@/context/auth";
 
-const image = require("../../assets/images/sign-in.png");
-const logo = require("../../assets/images/pow-tv-fulllogo.png");
+const image = require("../../../assets/images/sign-in.png");
+const logo = require("../../../assets/images/pow-tv-fulllogo.png");
 
 const GOLD = "#E8A020";
 const CARD_BG = "rgba(45, 15, 38, 0.88)";
@@ -27,6 +28,7 @@ const INPUT_BG = "rgba(255,255,255,0.08)";
 const INPUT_BORDER = "rgba(255,255,255,0.18)";
 
 export default function SignInScreen() {
+  const { signIn } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [fontsLoaded] = useFonts({
     Sora_400Regular,
@@ -35,7 +37,7 @@ export default function SignInScreen() {
   });
 
   // return <Redirect href="/(app)/search" />;
-  
+
   // if (!fontsLoaded) return null;
 
   return (
@@ -99,7 +101,11 @@ export default function SignInScreen() {
           <Text style={s.forgot}>Forgot Password</Text>
 
           {/* Continue */}
-          <TouchableOpacity style={s.continueBtn} activeOpacity={0.85}>
+          <TouchableOpacity
+            style={s.continueBtn}
+            activeOpacity={0.85}
+            onPress={() => signIn()}
+          >
             <Text style={s.continueBtnText}>Continue</Text>
           </TouchableOpacity>
 
@@ -118,9 +124,9 @@ export default function SignInScreen() {
 
         {/* Footer */}
         <View style={s.footer}>
-          <Text style={s.footerText}>New to PowTV? </Text>
+          <Text style={s.footerText}>New to PowTV?</Text>
           <Pressable>
-            <Link href="/signup"  style={s.footerLink}>
+            <Link href="/signup" style={s.footerLink}>
               Create an Account
             </Link>
           </Pressable>
