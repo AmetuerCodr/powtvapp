@@ -16,7 +16,7 @@ import {
   Sora_600SemiBold,
   Sora_700Bold,
 } from "@expo-google-fonts/sora";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 
 const image = require("../../assets/images/sign-in.png");
 const logo = require("../../assets/images/pow-tv-fulllogo.png");
@@ -34,7 +34,9 @@ export default function SignInScreen() {
     Sora_700Bold,
   });
 
-  if (!fontsLoaded) return null;
+  // return <Redirect href="/(app)/search" />;
+  
+  // if (!fontsLoaded) return null;
 
   return (
     <View style={s.container}>
@@ -91,7 +93,6 @@ export default function SignInScreen() {
                 color="rgba(255,255,255,0.5)"
               />
             </Pressable>
-        
           </View>
 
           {/* Forgot */}
@@ -119,7 +120,9 @@ export default function SignInScreen() {
         <View style={s.footer}>
           <Text style={s.footerText}>New to PowTV? </Text>
           <Pressable>
-            <Link href="/signup" style={s.footerLink}>Create an Account</Link>
+            <Link href="/signup"  style={s.footerLink}>
+              Create an Account
+            </Link>
           </Pressable>
         </View>
       </ImageBackground>

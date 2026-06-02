@@ -24,7 +24,7 @@ export default function AppTabs() {
         name="index"
         options={{
           title: "Home",
-          tabBarStyle: { display: "none" },
+          // tabBarStyle: { display: "none" },
           tabBarIcon: ({ color, size }) => (
             <Home width={size} height={size} color={color} />
           ),
