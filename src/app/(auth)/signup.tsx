@@ -47,7 +47,7 @@ export default function SignInScreen() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
-  async function handleLogin() {
+  async function handleSignup() {
     setStatus("submitting");
 
     const { error: err } = await supabase.auth.signInWithPassword({
