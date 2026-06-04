@@ -109,7 +109,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       password,
     });
     if (error) throw error; // caller (login screen) shows the message
-    setErrorMessage("cannot log in right now. please try again later.")
+    setErrorMessage("cannot log in right now. please try again later.");
     // success -> onAuthStateChange fires -> session set -> guard flips
   };
 
@@ -123,7 +123,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       },
     });
     if (error) throw error;
-    setErrorMessage("cannot sign up right now, please try again later")
+    setErrorMessage("cannot sign up right now, please try again later");
     // If "Confirm email" is ON, no session yet -> caller routes to /verify.
   };
 
@@ -131,7 +131,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-    } catch (error) {}
+    } catch (error) {
+      setErrorMessage("cannot sign out right now, please try again later");
+    }
   };
 
   return (
