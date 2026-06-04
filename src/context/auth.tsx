@@ -48,7 +48,6 @@ async function createSessionFromUrl(url: string) {
 type AuthState = {
   session: Session | null;
   isLoading: boolean;
-  errorMessage: string | null;
   logIn: (email: string, password: string) => Promise<void>;
   signUp: (firstName: string, email: string, password: string) => Promise<void>;
   signOut: () => Promise<void | AuthError>;
@@ -75,7 +74,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setIsLoading(false);
-      setErrorMessage(null);
     });
 
     const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
@@ -89,7 +87,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     if (url) {
       createSessionFromUrl(url).catch((e) =>
-        setErrorMessage("an error occured"),
+        console.warn("an error occured", e),
       );
     }
   }, [url]);
@@ -109,7 +107,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       password,
     });
     if (error) throw error; // caller (login screen) shows the message
-    setErrorMessage("cannot log in right now. please try again later.");
+
     // success -> onAuthStateChange fires -> session set -> guard flips
   };
 
@@ -123,22 +121,19 @@ export function SessionProvider({ children }: PropsWithChildren) {
       },
     });
     if (error) throw error;
-    setErrorMessage("cannot sign up right now, please try again later");
+
     // If "Confirm email" is ON, no session yet -> caller routes to /verify.
   };
 
   const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-    } catch (error) {
-      setErrorMessage("cannot sign out right now, please try again later");
-    }
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    
   };
 
   return (
     <AuthContext.Provider
-      value={{ session, errorMessage, isLoading, logIn, signUp, signOut }}
+      value={{ session, isLoading, logIn, signUp, signOut }}
     >
       {children}
     </AuthContext.Provider>
