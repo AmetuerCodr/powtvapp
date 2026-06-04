@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet } from "react-native";
-
+import { SessionProvider, useSession } from "@/context/auth";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Home</Text>
+      <Text className="text-red-600">Home</Text>
     </View>
   );
 }

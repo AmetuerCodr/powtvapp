@@ -1,20 +1,57 @@
 import {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
   type PropsWithChildren,
 } from "react";
-import * as SecureStore from "expo-secure-store";
+import { AppState } from "react-native";
+import * as Linking from "expo-linking";
+import { AuthError, type Session } from "@supabase/supabase-js";
+import { supabase } from "../../utils/supabase";
 
-const TOKEN_KEY = "powtv.session";
+// Where Supabase sends users back to after they tap the email link.
+// Dev (dev-client): powtv://...  |  Prod: powtv://
+// Log it once and paste the value into Supabase -> Auth -> URL Configuration
+// -> Redirect URLs (allow-list).
+export const redirectTo = Linking.createURL("/");
+
+// Tokens arrive in the URL fragment (#access_token=...&refresh_token=...).
+function paramsFromUrl(url: string): Record<string, string> {
+  const frag = url.includes("#")
+    ? url.split("#")[1]
+    : (url.split("?")[1] ?? "");
+  return Object.fromEntries(
+    frag
+      .split("&")
+      .filter(Boolean)
+      .map((kv) => {
+        const [k, v = ""] = kv.split("=");
+        return [decodeURIComponent(k), decodeURIComponent(v)];
+      }),
+  );
+}
+
+// Pull tokens out of an incoming deep link and hand them to Supabase.
+async function createSessionFromUrl(url: string) {
+  const { access_token, refresh_token, error_description } = paramsFromUrl(url);
+  if (error_description) throw new Error(error_description);
+  if (!access_token || !refresh_token) return; // not an auth link, ignore
+
+  const { error } = await supabase.auth.setSession({
+    access_token,
+    refresh_token,
+  });
+  if (error) throw error;
+}
 
 type AuthState = {
-  session: string | null;
+  session: Session | null;
   isLoading: boolean;
-  logIn: (email: string, password: string) => void;
-  signUp: (name: string, email: string, password: string) => void;
-  signOut: () => void;
+  errorMessage: string | null;
+  logIn: (email: string, password: string) => Promise<void>;
+  signUp: (firstName: string, email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void | AuthError>;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -28,47 +65,78 @@ export function useSession() {
 }
 
 export function SessionProvider({ children }: PropsWithChildren) {
-  // TODO(auth): replace in-memory state with real token storage
-  // (expo-secure-store) + async restore on boot. Flip isLoading while
-  // restoring so the splash screen can stay up.
-  const [session, setSession] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // true while restoring on boot
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Restore token from secure storage on app start.
+  // 1. Restore any saved session on boot, then subscribe to all future
+  //    auth changes (login, logout, token refresh, deep-link setSession).
   useEffect(() => {
-    (async () => {
-      try {
-        const saved = await SecureStore.getItemAsync(TOKEN_KEY);
-        if (saved) setSession(saved);
-      } catch (e) {
-        console.warn("session restore failed", e);
-      } finally {
-        setIsLoading(false); // splash can drop, guard can decide
-      }
-    })();
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setIsLoading(false);
+      setErrorMessage(null);
+    });
+
+    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+    });
+    return () => data.subscription.unsubscribe();
   }, []);
 
-  // const logIn = (token: string = "dev-session") => setSession(token);
-  // const signOut = () => setSession(null);
+  // 2. Handle the email-confirmation deep link (cold start + while running).
+  const url = Linking.useURL();
+  useEffect(() => {
+    if (url) {
+      createSessionFromUrl(url).catch((e) =>
+        setErrorMessage("an error occured"),
+      );
+    }
+  }, [url]);
 
-  const logIn = () => {
-    setSession("my_session");
-    setIsLoading(false);
+  // 3. Keep tokens fresh only while the app is foregrounded (Supabase RN guide).
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (state) => {
+      if (state === "active") supabase.auth.startAutoRefresh();
+      else supabase.auth.stopAutoRefresh();
+    });
+    return () => sub.remove();
+  }, []);
+
+  const logIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error; // caller (login screen) shows the message
+    setErrorMessage("cannot log in right now. please try again later.")
+    // success -> onAuthStateChange fires -> session set -> guard flips
   };
 
-  const signUp = () => {
-    setSession("my_session");
-    setIsLoading(false);
+  const signUp = async (firstName: string, email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectTo,
+        data: { first_name: firstName },
+      },
+    });
+    if (error) throw error;
+    setErrorMessage("cannot sign up right now, please try again later")
+    // If "Confirm email" is ON, no session yet -> caller routes to /verify.
   };
 
-  const signOut = () => {
-    setSession("");
-    setIsLoading(false);
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {}
   };
 
   return (
     <AuthContext.Provider
-      value={{ session, isLoading, logIn, signUp, signOut }}
+      value={{ session, errorMessage, isLoading, logIn, signUp, signOut }}
     >
       {children}
     </AuthContext.Provider>

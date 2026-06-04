@@ -19,7 +19,7 @@ import {
 import { Link } from "expo-router";
 import { useSession } from "@/context/auth";
 
-const image = require("../../../assets/images/sign-in.png");
+const image = require("../../../assets/images/sign-in.jpg");
 const logo = require("../../../assets/images/pow-tv-fulllogo.png");
 
 const GOLD = "#E8A020";
@@ -32,15 +32,27 @@ export default function SignInScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
+  const [error, setError] = useState("");
   const [fontsLoaded] = useFonts({
     Sora_400Regular,
     Sora_600SemiBold,
     Sora_700Bold,
   });
 
-  // return <Redirect href="/(app)/search" />;
+  if (!fontsLoaded) return null;
 
-  // if (!fontsLoaded) return null;
+  async function handleLogin() {
+    setError("");
+    setStatus("submitting");
+    try {
+      await logIn(email.trim().toLowerCase(), password);
+      // success: session set -> guard moves to (app). No navigation here.
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Login failed");
+      setStatus("error");
+    }
+  }
 
   return (
     <View style={s.container}>
@@ -53,7 +65,7 @@ export default function SignInScreen() {
         {/* Card */}
         <View style={s.card}>
           <Text style={s.welcomeBack}>WELCOME BACK</Text>
-          <Text style={s.signInTitle}>Sign In</Text>
+          <Text style={s.signInTitle}>Log In</Text>
           <Text style={s.subtitle}>Continue your journey</Text>
 
           {/* Email */}
@@ -110,10 +122,17 @@ export default function SignInScreen() {
           <TouchableOpacity
             style={s.continueBtn}
             activeOpacity={0.85}
-            onPress={() => logIn(email, password)}
+            onPress={handleLogin}
+            disabled={status === "submitting"}
           >
-            <Text style={s.continueBtnText}>Continue</Text>
+            <Text style={s.continueBtnText}>
+              {status === "submitting" ? "Signing in..." : "Continue"}
+            </Text>
           </TouchableOpacity>
+
+          {status === "error" ? (
+            <Text style={s.errorText}>{error}</Text>
+          ) : null}
 
           {/* Apple */}
           <TouchableOpacity style={s.appleBtn} activeOpacity={0.85}>
@@ -131,6 +150,7 @@ export default function SignInScreen() {
         {/* Footer */}
         <View style={s.footer}>
           <Text style={s.footerText}>New to PowTV?</Text>
+          
           <Pressable>
             <Link href="/signup" style={s.footerLink}>
               Create an Account
@@ -220,6 +240,13 @@ const s = StyleSheet.create({
     fontSize: 15,
     color: "#fff",
   },
+  errorText: {
+    fontFamily: "Sora_400Regular",
+    fontSize: 13,
+    color: "tomato",
+    textAlign: "center",
+    marginBottom: 8,
+  },
 
   appleBtn: {
     flexDirection: "row",
@@ -262,6 +289,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 24,
+    gap: 7,
   },
   footerText: {
     fontFamily: "Sora_400Regular",
@@ -270,7 +298,7 @@ const s = StyleSheet.create({
   },
   footerLink: {
     fontFamily: "Sora_600SemiBold",
-    fontSize: 14,
+    fontSize: 15,
     color: GOLD,
   },
 });

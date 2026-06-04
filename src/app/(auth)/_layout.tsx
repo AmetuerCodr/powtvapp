@@ -1,14 +1,13 @@
-import { Stack} from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
 export default function App() {
   return (
     <React.Fragment>
       <Stack
         screenOptions={{
-          headerTransparent: true,
-
-          headerTitle: () => null,
-          title: "",
+          // headerTransparent: true,
+          // headerTitle: () => null,
+          // title: "",
           headerShown: false,
           contentStyle: { backgroundColor: "#000" },
         }}

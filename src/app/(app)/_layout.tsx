@@ -61,6 +61,9 @@ export default function AppTabs() {
         name="profile"
         options={{
           title: "Profile",
+          sceneStyle: {
+            backgroundColor: "#000",
+          },
           tabBarIcon: ({ size }) => <Profile width={size} height={size} />,
         }}
       />

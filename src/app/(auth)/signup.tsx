@@ -1,6 +1,5 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useSession } from "@/context/auth";
-import { supabase } from "../../../utils/supabase";
 import {
   Text,
   View,
@@ -22,7 +21,7 @@ import {
 } from "@expo-google-fonts/sora";
 
 import { Link } from "expo-router";
-const image = require("../../../assets/images/sign-in.png");
+const image = require("../../../assets/images/sign-in.jpg");
 const logo = require("../../../assets/images/pow-tv-fulllogo.png");
 
 const GOLD = "#E8A020";
@@ -36,35 +35,35 @@ export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullname, setFullname] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
   const [fontsLoaded] = useFonts({
     Sora_400Regular,
     Sora_600SemiBold,
     Sora_700Bold,
   });
 
-  if (!fontsLoaded) return null;
   type Status = "idle" | "submitting" | "error";
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState("");
 
-  async function handleSignUp(firstname: string, email: string, password: string) {
+  if (!fontsLoaded) return null;
+  async function handleSignUp(
+    firstname: string,
+    email: string,
+    password: string,
+  ) {
+    setError("");
     setStatus("submitting");
-    const { error: err } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          first_name: firstname,
-        }
-      }
-    });
-
-    if (err) {
-      setError(err instanceof Error ? err.message : "Failed");
+    try {
+      // context.signUp adds emailRedirectTo + throws on error
+      await signUp(firstname, email, password);
+      setStatus("idle");
+      // Email not confirmed yet -> no session -> stay in (auth).
+      // Send them to the "check your inbox" screen, passing the email.
+      router.push({ pathname: "/(auth)/verify", params: { email } });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed");
       setStatus("error");
-      return;
     }
-    router.replace("/");
   }
 
   return (
@@ -92,7 +91,9 @@ export default function SignInScreen() {
             <TextInput
               placeholder="John Doe"
               value={fullname}
-              onChangeText={(newFullName) => setFullname(newFullName)}
+              onChangeText={(newFullName) =>
+                setFullname(newFullName)
+              }
               placeholderTextColor="rgba(255,255,255,0.4)"
               keyboardType="default"
               autoCapitalize="none"
@@ -111,7 +112,7 @@ export default function SignInScreen() {
             <TextInput
               placeholder="email"
               value={email}
-              onChangeText={(newEmail) => setEmail(newEmail)}
+              onChangeText={(newEmail) => setEmail(newEmail.toLowerCase())}
               placeholderTextColor="rgba(255,255,255,0.4)"
               keyboardType="email-address"
               style={[s.input, { flex: 1 }]}
@@ -148,14 +149,22 @@ export default function SignInScreen() {
           </View>
 
           {/* Continue */}
-
           <TouchableOpacity
-            onPress={() => signUp(fullname, email, password)}
+            onPress={() =>
+              handleSignUp(fullname, email.trim().toLowerCase(), password)
+            }
             style={s.continueBtn}
             activeOpacity={0.85}
+            disabled={status === "submitting"}
           >
-            <Text style={s.continueBtnText}>Continue</Text>
+            <Text style={s.continueBtnText}>
+              {status === "submitting" ? "Creating..." : "Continue"}
+            </Text>
           </TouchableOpacity>
+
+          {status === "error" ? (
+            <Text style={s.errorText}>{error}</Text>
+          ) : null}
 
           {/* Apple */}
           <TouchableOpacity
@@ -182,8 +191,8 @@ export default function SignInScreen() {
         <View style={s.footer}>
           <Text style={s.footerText}>Have an Account?</Text>
           <Pressable>
-            <Link href="/" style={s.footerLink}>
-              Sign In
+            <Link href={'/(auth)/login'} style={s.footerLink}>
+              Log In
             </Link>
           </Pressable>
         </View>
@@ -270,6 +279,13 @@ const s = StyleSheet.create({
     fontSize: 15,
     color: "#fff",
   },
+  errorText: {
+    fontFamily: "Sora_400Regular",
+    fontSize: 13,
+    color: "tomato",
+    textAlign: "center",
+    marginBottom: 8,
+  },
 
   appleBtn: {
     flexDirection: "row",
@@ -312,6 +328,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 24,
+    gap: 7,
   },
   footerText: {
     fontFamily: "Sora_400Regular",
@@ -320,7 +337,7 @@ const s = StyleSheet.create({
   },
   footerLink: {
     fontFamily: "Sora_600SemiBold",
-    fontSize: 14,
+    fontSize: 15,
     color: GOLD,
   },
 });
