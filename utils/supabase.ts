@@ -13,6 +13,7 @@ export const supabase = createClient<Database>(
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: Platform.OS === "web",
+      flowType: "pkce",
     },
   },
 );

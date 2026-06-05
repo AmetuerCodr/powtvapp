@@ -1,5 +1,4 @@
 import { Text, View, StyleSheet } from "react-native";
-import { SessionProvider, useSession } from "@/context/auth";
 const styles = StyleSheet.create({
   container: {
     flex: 1,

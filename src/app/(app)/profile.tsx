@@ -3,10 +3,10 @@ import { useState } from "react";
 import { Text, View, Pressable } from "react-native";
 import { useSession } from "@/context/auth";
 
-const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
-const [error, setError] = useState("");
 export default function Profile() {
   const { signOut } = useSession();
+  const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
+  const [error, setError] = useState("");
 
   async function handleSignOut() {
     setError("");

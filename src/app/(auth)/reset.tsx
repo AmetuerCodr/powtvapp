@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Text, View, TextInput, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import * as Linking from "expo-linking";
 
 import {
   useFonts,
@@ -27,10 +26,11 @@ const f = {
 };
 
 export default function Reset() {
-  const { signOut } = useSession();
+  // PKCE: the context exchanges the ?code from the deep link and flips
+  // isRecovering. We just read it — no token/event detection here.
+  const { signOut, isRecovering } = useSession();
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isRecoverySession, setIsRecoverySession] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [error, setError] = useState("");
   const [fontsLoaded] = useFonts({
@@ -38,20 +38,6 @@ export default function Reset() {
     Sora_600SemiBold,
     Sora_700Bold,
   });
-
-  const url = Linking.useURL();
-  useEffect(() => {
-    if (url?.includes("type=recovery")) setIsRecoverySession(true);
-  }, [url]);
-  // Verify we got here via a real recovery link.
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") setIsRecoverySession(true);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
 
   if (!fontsLoaded) return null;
 
@@ -72,7 +58,6 @@ export default function Reset() {
       return;
     }
     setStatus("idle");
-    setIsRecoverySession(false);
     // Sign out the recovery session + clear isRecovering, then let them log in
     // with the NEW password. (guard sends them to (auth) once session is null.)
     await signOut();
@@ -95,7 +80,7 @@ export default function Reset() {
           />
         </Pressable>
 
-        {isRecoverySession ? (
+        {isRecovering ? (
           /* ---------- New-password form ---------- */
           <View className="px-6 pt-6">
             <Text style={f.h1} className="text-[#fafafa] mb-2">

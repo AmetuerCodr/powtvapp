@@ -16,32 +16,19 @@ import { supabase } from "@/utils/supabase";
 // -> Redirect URLs (allow-list).
 export const redirectTo = Linking.createURL("/");
 
-// Tokens arrive in the URL fragment (#access_token=...&refresh_token=...).
-function paramsFromUrl(url: string): Record<string, string> {
-  const frag = url.includes("#")
-    ? url.split("#")[1]
-    : (url.split("?")[1] ?? "");
-  return Object.fromEntries(
-    frag
-      .split("&")
-      .filter(Boolean)
-      .map((kv) => {
-        const [k, v = ""] = kv.split("=");
-        return [decodeURIComponent(k), decodeURIComponent(v)];
-      }),
-  );
-}
-
-// Pull tokens out of an incoming deep link and hand them to Supabase.
+// PKCE: the recovery/confirmation link redirects back to the app with a
+// single-use ?code=<auth_code>. We exchange that code — paired with the
+// code_verifier saved in AsyncStorage when the email was requested — for a
+// real session. (No tokens in the fragment, no type=recovery: that's implicit.)
 async function createSessionFromUrl(url: string) {
-  const { access_token, refresh_token, error_description } = paramsFromUrl(url);
-  if (error_description) throw new Error(error_description);
-  if (!access_token || !refresh_token) return; // not an auth link, ignore
+  const { queryParams } = Linking.parse(url);
+  const errorDescription = queryParams?.error_description as string | undefined;
+  if (errorDescription) throw new Error(errorDescription);
 
-  const { error } = await supabase.auth.setSession({
-    access_token,
-    refresh_token,
-  });
+  const code = queryParams?.code as string | undefined;
+  if (!code) return; // not an auth link, ignore
+
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) throw error;
 }
 
@@ -92,11 +79,13 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const url = Linking.useURL();
   useEffect(() => {
     if (!url) return;
-    // A recovery link mints a real session, but we must keep the user in the
+    // PKCE recovery lands on /reset with a ?code (no type=recovery anymore).
+    // Exchanging it mints a real session, but we must keep the user in the
     // (auth) group so they actually set a new password (see guard in _layout).
-    if (url.includes("type=recovery")) setIsRecovering(true);
+    const { path, queryParams } = Linking.parse(url);
+    if (queryParams?.code && path?.includes("reset")) setIsRecovering(true);
     createSessionFromUrl(url).catch((e) =>
-      console.warn("an error occured", e),
+      console.warn("deep link error", e),
     );
   }, [url]);
 
@@ -141,7 +130,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
   };
 
   async function sendForgotPasswordLink(email: string) {
-    const redirectUrl = Linking.createURL("reset");
+    const redirectUrl = Linking.createURL("/reset");
+    console.log("[POWTV] reset redirectTo:", redirectUrl);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
     });
