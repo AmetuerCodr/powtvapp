@@ -12,8 +12,9 @@ const styles = StyleSheet.create({
 
 export default function HomeScreen() {
   return (
+    
     <View style={styles.container}>
-      <Text className="text-red-600">Home</Text>
+      <Text className="text-white text-3rem">Home</Text>
     </View>
   );
 }

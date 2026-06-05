@@ -8,7 +8,7 @@ import {
 import { AppState } from "react-native";
 import * as Linking from "expo-linking";
 import { AuthError, type Session } from "@supabase/supabase-js";
-import { supabase } from "../../utils/supabase";
+import { supabase } from "@/utils/supabase";
 
 // Where Supabase sends users back to after they tap the email link.
 // Dev (dev-client): powtv://...  |  Prod: powtv://
@@ -48,9 +48,14 @@ async function createSessionFromUrl(url: string) {
 type AuthState = {
   session: Session | null;
   isLoading: boolean;
+  // True while a password-recovery deep link is active. The session exists
+  // (needed to call updateUser) but the user hasn't proven their identity with
+  // a password yet, so the guard must NOT treat them as fully logged in.
+  isRecovering: boolean;
   logIn: (email: string, password: string) => Promise<void>;
   signUp: (firstName: string, email: string, password: string) => Promise<void>;
   signOut: () => Promise<void | AuthError>;
+  sendForgotPasswordLink: (email: string) => Promise<void | AuthError>;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -66,6 +71,7 @@ export function useSession() {
 export function SessionProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true); // true while restoring on boot
+  const [isRecovering, setIsRecovering] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // 1. Restore any saved session on boot, then subscribe to all future
@@ -85,11 +91,13 @@ export function SessionProvider({ children }: PropsWithChildren) {
   // 2. Handle the email-confirmation deep link (cold start + while running).
   const url = Linking.useURL();
   useEffect(() => {
-    if (url) {
-      createSessionFromUrl(url).catch((e) =>
-        console.warn("an error occured", e),
-      );
-    }
+    if (!url) return;
+    // A recovery link mints a real session, but we must keep the user in the
+    // (auth) group so they actually set a new password (see guard in _layout).
+    if (url.includes("type=recovery")) setIsRecovering(true);
+    createSessionFromUrl(url).catch((e) =>
+      console.warn("an error occured", e),
+    );
   }, [url]);
 
   // 3. Keep tokens fresh only while the app is foregrounded (Supabase RN guide).
@@ -107,6 +115,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
       password,
     });
     if (error) throw error; // caller (login screen) shows the message
+    setIsRecovering(false); // a real password login ends any recovery mode
 
     // success -> onAuthStateChange fires -> session set -> guard flips
   };
@@ -128,12 +137,28 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    
+    setIsRecovering(false);
   };
 
+  async function sendForgotPasswordLink(email: string) {
+    const redirectUrl = Linking.createURL("reset");
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl,
+    });
+
+    if (error) throw error;
+  }
   return (
     <AuthContext.Provider
-      value={{ session, isLoading, logIn, signUp, signOut }}
+      value={{
+        session,
+        sendForgotPasswordLink,
+        isLoading,
+        isRecovering,
+        logIn,
+        signUp,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

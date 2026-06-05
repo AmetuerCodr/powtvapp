@@ -8,7 +8,7 @@
     "scheme": "powtv",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.powtv.app",
+      "bundleIdentifier": "com.templeofradiantlight.powtv",
       "icon": "./assets/expo.icon",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false

@@ -1,15 +1,35 @@
 import React from "react";
+import { useState } from "react";
 import { Text, View, Pressable } from "react-native";
 import { useSession } from "@/context/auth";
 
+const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
+const [error, setError] = useState("");
 export default function Profile() {
   const { signOut } = useSession();
+
+  async function handleSignOut() {
+    setError("");
+    setStatus("submitting");
+    try {
+      await signOut();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sign Out failed");
+      setStatus("error");
+    }
+  }
+
   return (
     <View className="text-white text-lg flex-1 justify-center items-center">
       <Text className="text-white">Profile</Text>
-      <Pressable onPress={() => signOut()}>
+      <Pressable onPress={() => handleSignOut()}>
         <Text className="text-white font-bold">Sign Out</Text>
       </Pressable>
+      {status === "error" ? (
+        <Text className="text-red-500 text-sm justify-center items-center">
+          {error}
+        </Text>
+      ) : null}
     </View>
   );
 }

@@ -15,7 +15,7 @@ import {
   Sora_600SemiBold,
   Sora_700Bold,
 } from "@expo-google-fonts/sora";
-import { supabase } from "../../../utils/supabase";
+import { supabase } from "@/utils/supabase";
 
 // Subtle film grain: a light-gray noise texture laid over the near-black
 // base at low opacity (see s.noise). Tune opacity to taste.

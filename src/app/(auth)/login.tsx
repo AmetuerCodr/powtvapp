@@ -18,7 +18,7 @@ import {
 } from "@expo-google-fonts/sora";
 import { Link } from "expo-router";
 import { useSession } from "@/context/auth";
-
+// import { supabase } from "@/n";
 const image = require("../../../assets/images/sign-in.jpg");
 const logo = require("../../../assets/images/pow-tv-fulllogo.png");
 
@@ -29,10 +29,18 @@ const INPUT_BORDER = "rgba(255,255,255,0.18)";
 
 export default function SignInScreen() {
   const { logIn } = useSession();
+  const { sendForgotPasswordLink } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
+  const [status, setStatus] = useState<
+    | "idle"
+    | "submitting"
+    | "resetSubmitting"
+    | "success"
+    | "resetSuccess"
+    | "error"
+  >("idle");
   const [error, setError] = useState("");
   const [fontsLoaded] = useFonts({
     Sora_400Regular,
@@ -41,6 +49,19 @@ export default function SignInScreen() {
   });
 
   if (!fontsLoaded) return null;
+
+  async function forgotPassword(email: string) {
+    if (!email) throw new Error("email not found");
+    setError("");
+    setStatus("resetSubmitting");
+    try {
+      await sendForgotPasswordLink(email);
+      setStatus("resetSuccess");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "reset link send failed");
+      setStatus("error");
+    }
+  }
 
   async function handleLogin() {
     setError("");
@@ -116,7 +137,14 @@ export default function SignInScreen() {
           </View>
 
           {/* Forgot */}
-          <Text style={s.forgot}>Forgot Password</Text>
+          <Pressable
+            onPress={() => forgotPassword(email)}
+            disabled={!email.trim()}
+          >
+            <Text style={[s.forgot, !email.trim() && s.forgotDisabled]}>
+              Forgot Password
+            </Text>
+          </Pressable>
 
           {/* Continue */}
           <TouchableOpacity
@@ -130,8 +158,10 @@ export default function SignInScreen() {
             </Text>
           </TouchableOpacity>
 
-          {status === "error" ? (
-            <Text style={s.errorText}>{error}</Text>
+          {status === "error" ? <Text style={s.errorText}>{error}</Text> : null}
+          {/*{status === "success" ? <Text style={s.successText}>checkr}</Text> : null}*/}
+          {status === "resetSuccess" ? (
+            <Text style={s.successText}>check your email!</Text>
           ) : null}
 
           {/* Apple */}
@@ -150,7 +180,7 @@ export default function SignInScreen() {
         {/* Footer */}
         <View style={s.footer}>
           <Text style={s.footerText}>New to PowTV?</Text>
-          
+
           <Pressable>
             <Link href="/signup" style={s.footerLink}>
               Create an Account
@@ -226,6 +256,7 @@ const s = StyleSheet.create({
     marginBottom: 20,
     letterSpacing: 0.5,
   },
+  forgotDisabled: { opacity: 0.4 },
 
   continueBtn: {
     backgroundColor: GOLD,
@@ -244,6 +275,13 @@ const s = StyleSheet.create({
     fontFamily: "Sora_400Regular",
     fontSize: 13,
     color: "tomato",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  successText: {
+    fontFamily: "Sora_400Regular",
+    fontSize: 13,
+    color: "#34d399",
     textAlign: "center",
     marginBottom: 8,
   },
