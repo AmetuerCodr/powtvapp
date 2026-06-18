@@ -7,6 +7,10 @@
     "icon": "./assets/images/icon.png",
     "scheme": "powtv",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/Splash.jpg",
+      "resizeMode": "contain"
+    },
     "ios": {
       "bundleIdentifier": "com.templeofradiantlight.powtv",
       "icon": "./assets/expo.icon",
