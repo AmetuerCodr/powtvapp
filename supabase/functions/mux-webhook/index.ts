@@ -35,6 +35,9 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.text()
+
+    // const event = await req.json();
+    
     await muxSync.processWebhook(body, Object.fromEntries(req.headers.entries()))
     await queueWorkflowsForEvent(body, Object.fromEntries(req.headers.entries()))
 
