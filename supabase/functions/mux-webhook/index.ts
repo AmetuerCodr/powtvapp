@@ -38,6 +38,7 @@ export default {
 
     try {
       const body = await req.text();
+      
       await muxSync.processWebhook(
         body,
         Object.fromEntries(req.headers.entries()),
@@ -62,3 +63,9 @@ export default {
     }
   }),
 };
+
+
+
+
+
+
