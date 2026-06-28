@@ -45,13 +45,14 @@
         }
       ],
       "expo-secure-store",
-     [
-       "expo-video",
-       {
-         "supportsBackgroundPlayback": true,
-         "supportsPictureInPicture": true
-       }
-     ]
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,
