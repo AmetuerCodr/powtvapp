@@ -3,14 +3,14 @@ import { AntDesign, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Slider } from "@miblanchard/react-native-slider";
 
 
+// onPlayPreviousVideo, onPlayNextvideo,
 interface VideoContrls{
   onTogglePlayPause: () => void;
-  onPlayPreviousVideo: () => void;
-  onPlayNextvideo: () => void;
-  onPlayNextVideo: () => void;
+  // onPlayPreviousVideo: () => void;
+  // onPlayNextVideo: () => void;
   onToggleMute: () => void;
   onTogglePlaybackSpeed: () => void;
-  onSeek: () => void;
+  onSeek: (number: number) => void;
   onToggleFullscreen: () => void;
   duration: number;
   currentTime: number;
@@ -23,8 +23,8 @@ interface VideoContrls{
 
 const VideoControls = ({
   onTogglePlayPause,
-  onPlayPreviousVideo,
-  onPlayNextVideo,
+  // onPlayPreviousVideo,
+  // onPlayNextVideo,
   onToggleMute,
   onTogglePlaybackSpeed,
   onSeek,
@@ -65,18 +65,18 @@ const VideoControls = ({
             color="white"
           />
         </TouchableOpacity>
-        <TouchableOpacity
+        {/*<TouchableOpacity
           onPress={onPlayPreviousVideo}
           style={styles.controlButton}
         >
           <AntDesign name="step-backward" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
+        </TouchableOpacity>*/}
+        {/*<TouchableOpacity
           onPress={onPlayNextVideo}
           style={styles.controlButton}
         >
           <AntDesign name="step-forward" size={24} color="white" />
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
         <TouchableOpacity
           onPress={() => {
             onToggleMute();

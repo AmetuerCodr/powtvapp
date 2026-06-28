@@ -11,13 +11,11 @@ import * as ScreenOrientation from "expo-screen-orientation";
 
 const playbackSpeedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-
 import { useVideoPlayer, VideoView } from "expo-video";
-import { View, StyleSheet, Button, Pressable, Text, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 
 const videoSource =
   "https://stream.mux.com/01YWjOnGB3qF1raEkOXoud00p00jdfyB6PVirtWLTlaqp00.m3u8";
-
 
 
 export default function WatchScreen() {
@@ -30,7 +28,7 @@ export default function WatchScreen() {
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  const player = useVideoPlayer(videoSource, (player) => {
+  const player = useVideoPlayer({uri: videoSource, contentType: 'hls'}, (player) => {
 player.timeUpdateEventInterval = 0.5;
   });
 
@@ -40,6 +38,12 @@ player.timeUpdateEventInterval = 0.5;
   useEffect(() => {
     console.log(player.currentTime)
   }, [player.currentTime])
+
+
+  const onSeek = (seconds: number) => {
+    if (!Number.isFinite(seconds)) return; // ignore NaN / undefined / non-numbers
+    player.currentTime = seconds;
+  };
 
   const { isPlaying } = useEvent(player, "playingChange", {
     isPlaying: player.playing,
@@ -61,9 +65,6 @@ player.timeUpdateEventInterval = 0.5;
      setPlaybackSpeed(playbackSpeedOptions[i]);
    };
  
-   const onSeek = (seconds: number) => {
-     player.currentTime = seconds; // slider and player are both in seconds
-   };
  
    const toggleFullscreen = async () => {
      if (!isFullscreen) {
@@ -91,57 +92,43 @@ player.timeUpdateEventInterval = 0.5;
   
   return (
     <View style={styles.contentContainer}>
-      <VideoView
-      nativeControls={true}
-        style={styles.video}
-        player={player}
-        fullscreenOptions={{ enable: true }}
-        allowsPictureInPicture
-      />
-      {showControls && (
-        <VideoControls
-          onTogglePlayPause={togglePlayPause}
-          onPlayPreviousVideo={playPreviousVideo}
-          onPlayNextVideo={playNextVideo}
-          onToggleMute={toggleMute}
-          onTogglePlaybackSpeed={togglePlaybackSpeed}
-          onSeek={(value) => {
-            videoRef.current.currentTime = value / 1000; // expo-video uses seconds
-            setCurrentTime(value);
-          }}
-          onToggleFullscreen={toggleFullscreen}
-          duration={duration * 1000}        // from your assets table, converted to ms
-          currentTime={currentTime}
-          rate={playbackSpeed}
-          isMuted={isMuted}
-          shouldPlay={isPlaying}
-          fullScreenValue={isFullscreen}
-        />
-      )}
-      {/*<View style={styles.controlsContainer}>
-        <Pressable
-          onPress={() => {
-            if (isPlaying) {
-              player.pause();
-            } else {
-              player.play();
-            }
-          }}
-        >
-          <Text>{isPlaying ? "Pause" : "Play"}</Text>
-        </Pressable>
-      </View>*/}
+     
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>
+          <VideoView
+            player={player}
+            style={{ flex: 1 }}
+            contentFit="cover"     // replaces expo-av's resizeMode="cover"
+            nativeControls={false} // hide built-ins; you have custom VideoControls
+          />
+        </GestureDetector>
+  
+        {showControls && (
+          <VideoControls
+            onTogglePlayPause={togglePlayPause}
+            onToggleMute={toggleMute}
+            onTogglePlaybackSpeed={togglePlaybackSpeed}
+            onSeek={onSeek}                // seconds
+            onToggleFullscreen={toggleFullscreen}
+            duration={Number.isFinite(player.duration) ? player.duration : 0}     // seconds — matches duration_seconds in Supabase
+            currentTime={currentTime}      // seconds
+            rate={playbackSpeed}
+            isMuted={isMuted}
+            shouldPlay={isPlaying}
+            fullScreenValue={isFullscreen}
+          />
+        )}
+      </GestureHandlerRootView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   contentContainer: {
-    flex: 1,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 50,
+    position: 'relative',
+    display: 'flex',
+    width: '100%',
+    aspectRatio: 16 / 9,
   },
   video: {
     width: 350,
