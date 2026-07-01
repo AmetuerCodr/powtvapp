@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import VideoControls from '@/components/VideoControls';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useEvent } from "expo";
 
 // Needed only because gesture callbacks run on the UI thread (see Gestures below).
 import { runOnJS } from "react-native-reanimated";
-
 
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import * as ScreenOrientation from "expo-screen-orientation";
@@ -12,24 +12,30 @@ import * as ScreenOrientation from "expo-screen-orientation";
 const playbackSpeedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 import { useVideoPlayer, VideoView } from "expo-video";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, useWindowDimensions, Image } from "react-native";
+
 
 const videoSource =
   "https://stream.mux.com/01YWjOnGB3qF1raEkOXoud00p00jdfyB6PVirtWLTlaqp00.m3u8";
 
 
 export default function WatchScreen() {
-
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const isLandscape = width > height;
   const [showControls, setShowControls] = useState(false);
+
+  
 
   // Mirrors of player settings that don't emit their own events,
   // kept in state only so the UI can show the current value.
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
+
+
   const player = useVideoPlayer({uri: videoSource, contentType: 'hls'}, (player) => {
-player.timeUpdateEventInterval = 0.5;
+    player.timeUpdateEventInterval = 0.5;
   });
 
   const timeUpdate = useEvent(player, "timeUpdate");
@@ -80,10 +86,13 @@ player.timeUpdateEventInterval = 0.5;
    const seekForward = () => player.seekBy(10);
    const toggleControls = () => setShowControls((v) => !v);
  
+
+
+  
    const doubleTap = Gesture.Tap()
      .numberOfTaps(2)
      .onStart((event) => {
-       const mid = Dimensions.get("screen").width / 2;
+       const mid = width / 2;
        event.absoluteX < mid ? runOnJS(seekBackward)() : runOnJS(seekForward)();
      });
  
@@ -91,19 +100,48 @@ player.timeUpdateEventInterval = 0.5;
 
   
   return (
-    <View style={styles.contentContainer}>
-     
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>
+    <View
+      style={
+        {
+            flex: 1,
+            backgroundColor: '#000',
+            paddingTop: isLandscape ? 0 : insets.top,
+            paddingLeft: isLandscape ? insets.left : 0,
+            paddingRight: isLandscape ? insets.right : 0,
+            paddingBottom: isLandscape ? 0 : insets.bottom,
+        }
+      }>
+
+
+{/*
+        <Image
+             source={require("../../../assets/images/noise.jpg")}
+             resizeMode="cover"
+             style={[StyleSheet.absoluteFill, { opacity: 0.1 }]}
+           />*/}
+
+
+    
+      
+      <View
+        style={isLandscape
+            ? styles.videoContainerLandscape  // flex: 1, fills remaining space after insets
+            : styles.videoContainerPortrait   // width: '100%', aspectRatio: 16/9
+          }
+    >
+        
+
+        <GestureHandlerRootView >
+          <GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>
           <VideoView
             player={player}
-            style={{ flex: 1 }}
-            contentFit="cover"     // replaces expo-av's resizeMode="cover"
+            style={styles.video}
+            contentFit="contain"    
             nativeControls={false} // hide built-ins; you have custom VideoControls
           />
-        </GestureDetector>
-  
-        {showControls && (
+          </GestureDetector>
+
+
           <VideoControls
             onTogglePlayPause={togglePlayPause}
             onToggleMute={toggleMute}
@@ -117,24 +155,52 @@ player.timeUpdateEventInterval = 0.5;
             shouldPlay={isPlaying}
             fullScreenValue={isFullscreen}
           />
-        )}
-      </GestureHandlerRootView>
+  {/*showControls && */}
+        {/*{(
+         
+        )}*/}
+        </GestureHandlerRootView>
+      </View>
+
+
+      {/*{!isLandscape && (
+            <View style={[styles.contentContainer, { paddingTop: 0 }]}>
+
+            </View>)}*/}
+
+     
     </View>
   );
 }
 
+
+
+
+
+
 const styles = StyleSheet.create({
-  contentContainer: {
-    position: 'relative',
-    display: 'flex',
-    width: '100%',
-    aspectRatio: 16 / 9,
-  },
+  videoContainerPortrait: {
+      width: '100%',
+      aspectRatio: 16 / 9,
+      backgroundColor: '#000',
+    },
+    videoContainerLandscape: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      backgroundColor: '#000',
+    },
   video: {
-    width: 350,
-    height: 275,
+    width: '100%',
+    height: '100%'
   },
-  controlsContainer: {
-    padding: 10,
-  },
+  
+  // videoVertical: {
+  //   width: '100%',
+  //   aspectRatio: 16 / 9,
+  //   marginTop: '20%'
+  // }
+  // controlsContainer: {
+  //   padding: 10,
+  // },
 });

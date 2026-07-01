@@ -1,13 +1,9 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet} from "react-native";
 import { AntDesign, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { Slider } from "@miblanchard/react-native-slider";
 
-
-// onPlayPreviousVideo, onPlayNextvideo,
 interface VideoContrls{
   onTogglePlayPause: () => void;
-  // onPlayPreviousVideo: () => void;
-  // onPlayNextVideo: () => void;
   onToggleMute: () => void;
   onTogglePlaybackSpeed: () => void;
   onSeek: (number: number) => void;
@@ -23,8 +19,6 @@ interface VideoContrls{
 
 const VideoControls = ({
   onTogglePlayPause,
-  // onPlayPreviousVideo,
-  // onPlayNextVideo,
   onToggleMute,
   onTogglePlaybackSpeed,
   onSeek,
@@ -53,16 +47,21 @@ const VideoControls = ({
   return (
     <>
       <View style={styles.controls}>
+       
+        <View style={styles.controlButtonContainer}>
+          
+      </View>
         <TouchableOpacity
           onPress={() => {
             onTogglePlayPause();
           }}
+          hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           style={styles.controlButton}
         >
           <Ionicons
             name={shouldPlay ? "pause" : "play-sharp"}
-            size={24}
-            color="white"
+            size={32}
+            color="#000000"
           />
         </TouchableOpacity>
         {/*<TouchableOpacity
@@ -77,7 +76,10 @@ const VideoControls = ({
         >
           <AntDesign name="step-forward" size={24} color="white" />
         </TouchableOpacity>*/}
-        <TouchableOpacity
+
+
+        
+        {/*<TouchableOpacity
           onPress={() => {
             onToggleMute();
           }}
@@ -88,16 +90,16 @@ const VideoControls = ({
             size={24}
             color="white"
           />
-        </TouchableOpacity>
-        <TouchableOpacity
+        </TouchableOpacity>*/}
+        {/*<TouchableOpacity
           onPress={() => {
             onTogglePlaybackSpeed();
           }}
           style={styles.controlButton}
         >
           <Text style={styles.playbackSpeedText}>{`${rate}x`}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
+        </TouchableOpacity>*/}
+        {/*<TouchableOpacity
           onPress={() => {
             onToggleFullscreen();
           }}
@@ -108,8 +110,10 @@ const VideoControls = ({
             size={24}
             color="white"
           />
-        </TouchableOpacity>
-      </View>
+        </TouchableOpacity>*/}
+      </View> 
+      *
+      
       <View style={styles.progressContainer}>
         <Text style={styles.timeText}>{formatTime(time)}</Text>
         <Slider
@@ -123,7 +127,7 @@ const VideoControls = ({
           onSlidingComplete={(value) => {
             onSeek(value);
           }}
-          minimumTrackTintColor="#FFF"
+          minimumTrackTintColor="#F5A100"
           maximumTrackTintColor="#AAA"
           thumbTintColor="#FFF"
         />
@@ -135,25 +139,41 @@ const VideoControls = ({
 
 const styles = StyleSheet.create({
   controls: {
+    position: 'absolute',
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     padding: 10,
-    backgroundColor: "#000",
+  },
+  controlButtonContainer: {
+    flex: 1,
+    aspectRatio: 16 / 9,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   controlButton: {
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
+    position: 'absolute',
+    backgroundColor: '#F5A100',
+    padding: 15,
+    borderRadius: '50%',
   },
   playbackSpeedText: {
     color: "white",
     fontSize: 16,
   },
   progressContainer: {
+    position: 'absolute',
+    bottom: '5%',
+    flex: 1,
+    // aspectRatio: 16 / 9,
+    display: 'flex',
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
     alignSelf: "center",
-    backgroundColor: "black",
+    // backgroundColor: 'rgba(102, 102, 102, 0.2)',
     padding: 10,
   },
   slider: {
@@ -161,8 +181,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   timeText: {
-    color: "white",
-    fontSize: 12,
+    color: "#fafaf9",
+    fontSize: 13,
+    fontWeight: '700'
+    
   },
 });
 
