@@ -224,8 +224,6 @@ export default function WatchScreen() {
         </View>
       )}
 
-
-
       <View>
         <Text style={{color: 'white', fontSize: 20}}  >
           Insert Video Feed here!

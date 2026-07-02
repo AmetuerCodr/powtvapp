@@ -1,12 +1,24 @@
 import { Tabs } from "expo-router";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Home from "@/components/icons/Home";
 import Search from "@/components/icons/Search";
 import Watch from "@/components/icons/Watch";
 import Library from "@/components/icons/Library";
 import Profile from "@/components/icons/Profile";
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 10,
+    }
+  }
+})
+
+
 export default function AppTabs() {
   return (
+    <QueryClientProvider client={queryClient}>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#FFFFFF",
@@ -68,6 +80,7 @@ export default function AppTabs() {
         }}
       />
       <Tabs.Screen name="explore" options={{ href: null }} />
-    </Tabs>
+      </Tabs>
+    </QueryClientProvider>
   );
 }
