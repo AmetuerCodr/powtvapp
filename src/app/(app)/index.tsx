@@ -111,8 +111,6 @@
 // }
 
 
-
-
 // create function to fetch assets from supabase
 // write typescript interface to structure data from function
 // put it all together in a scrollable feed
@@ -121,11 +119,10 @@
 
 
 
-
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ActivityIndicator, RefreshControl, View } from 'react-native';
 import { Image } from 'expo-image';
-import { useMemo, useCallback, useEffect } from 'react';
+import { useMemo, useCallback, useEffect, useRef } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import { debounce } from 'lodash';
 
@@ -166,19 +163,13 @@ export default function ImageGallery() {
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
 
-
   const images = useMemo(
     () => data?.pages.flatMap((page) => page.images) || [],
     [data]
   );
 
 
-  
-  useEffect(() => {
-    if (isRefetching) {
-      console.log("refrehing the page!")
-    }
-  }, [isRefetching])
+
 
   const handleEndReached = useCallback(
     debounce(() => {
@@ -189,8 +180,14 @@ export default function ImageGallery() {
     [hasNextPage, isFetchingNextPage, fetchNextPage]
   );
 
+
+  const handleRefresh = () => {
+    // handleEndReached();
+    console.log("refrehing the page!");
+}
+
   return (
-    <View style={{ flex: 1, backgroundColor: 'white', marginHorizontal: '5%', marginTop: '10%' }}>
+    <View style={{ flex: 1, backgroundColor: '#000', marginHorizontal: '5%', marginTop: '20%', overflow: 'hidden' }}>
       <FlashList
         data={images}
         keyExtractor={(item) => item.id}
@@ -198,10 +195,11 @@ export default function ImageGallery() {
           <RefreshControl
             tintColor={'#f59e0b'}
             refreshing={isRefetching}
-            onRefresh={refetch}
+            onRefresh={handleRefresh}
           />
         }
         drawDistance={600}
+
         renderItem={({ item }) => (
           <Image
             source={{ uri: item.url }}
@@ -212,7 +210,7 @@ export default function ImageGallery() {
             placeholder={{ uri: 'https://via.placeholder.com/300x200' }} // Add placeholder
           />
         )}
-        onEndReachedThreshold={0.4}
+        onEndReachedThreshold={1.7}
         onEndReached={handleEndReached}
         ListFooterComponent={
           isFetchingNextPage ? (

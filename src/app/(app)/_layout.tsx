@@ -36,6 +36,9 @@ export default function AppTabs() {
         name="index"
         options={{
           title: "Home",
+          sceneStyle: {
+            backgroundColor: "#000",
+          },
           // tabBarStyle: { display: "none" },
           tabBarIcon: ({ color, size }) => (
             <Home width={size} height={size} color={color} />
@@ -79,7 +82,9 @@ export default function AppTabs() {
           tabBarIcon: ({ size }) => <Profile width={size} height={size} />,
         }}
       />
-      <Tabs.Screen name="explore" options={{ href: null }} />
+      
+        <Tabs.Screen name="explore" options={{ href: null }} />
+        <Tabs.Screen name="video" options={{ href: null, headerShown: false }} />
       </Tabs>
     </QueryClientProvider>
   );

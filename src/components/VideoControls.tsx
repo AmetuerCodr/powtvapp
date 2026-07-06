@@ -72,7 +72,7 @@ const VideoControls = ({
           <Ionicons
             name={shouldPlay ? "pause" : "play-sharp"}
             size={26}
-            color="#000000"
+            color="#FFFFFF"
           />
         </TouchableOpacity>
       </View>
@@ -98,7 +98,7 @@ const VideoControls = ({
             <MaterialIcons
               name={fullScreenValue ? "fullscreen-exit" : "fullscreen"}
               size={22}
-              color="#000000"
+              color="#FFFFFF"
             />
           </TouchableOpacity>
         </View>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   playButton: {
-    backgroundColor: GOLD_TRANSLUCENT,
+    backgroundColor: "transparent",
     padding: 12,
     borderRadius: 999,
   },
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   smallButton: {
-    backgroundColor: GOLD_TRANSLUCENT,
+    backgroundColor: "transparent",
     width: 34,
     height: 34,
     borderRadius: 17,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   speedText: {
-    color: "#000000",
+    color: "#FFFFFF",
     fontSize: 14,
     fontWeight: "700",
   },
