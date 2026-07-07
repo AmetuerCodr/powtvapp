@@ -1,5 +1,7 @@
 import { Tabs } from "expo-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 import Home from "@/components/icons/Home";
 import Search from "@/components/icons/Search";
 import Watch from "@/components/icons/Watch";
@@ -18,11 +20,13 @@ const queryClient = new QueryClient({
 
 export default function AppTabs() {
   return (
+     <GestureHandlerRootView style={{ flex: 1 }}>
     <QueryClientProvider client={queryClient}>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#FFFFFF",
-        tabBarInactiveTintColor: "#6B7280",
+            tabBarInactiveTintColor: "#6B7280",
+
         tabBarStyle: {
           backgroundColor: "#18181B",
           borderTopWidth: 0,
@@ -84,8 +88,9 @@ export default function AppTabs() {
       />
       
         <Tabs.Screen name="explore" options={{ href: null }} />
-        <Tabs.Screen name="video" options={{ href: null, headerShown: false }} />
+        <Tabs.Screen name="video" options={{ href: null, headerShown: false, }} />
       </Tabs>
-    </QueryClientProvider>
+      </QueryClientProvider>
+     </GestureHandlerRootView>
   );
 }

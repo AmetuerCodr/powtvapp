@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import React from "react";
+
 
 export default function RootLayout() {
   return (
@@ -7,6 +7,7 @@ export default function RootLayout() {
       screenOptions={{
         headerShown: false, // default: no header anywhere
         headerTintColor: "#FFFFFF",
+
       }}
     >
       {/*<Stack.Screen

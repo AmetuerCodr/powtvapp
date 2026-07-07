@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { MuxAssetData } from '@/utils/interfaces';
 import VideoControls from '@/components/VideoControls';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,8 +22,6 @@ import { Ionicons } from "@expo/vector-icons";
 // POWTV brand accents
 const GOLD = "#F5A100";
 const PINK = "#E14B9A";
-
-
 
 // Mockup metadata — swap for real Supabase video record fields later.
 const videoMeta = {
@@ -60,29 +59,17 @@ function getRelativeTime(isoString: string): string {
 
 
 export default function WatchScreen() {
-  interface MuxAssetData {
-    asset_id: string;
-    title: string;
-    status: "ready" | "preparing" | "entered";
-    duration: number;
-    max_stored_resolution: '2160p' | '1080p' | '720p' | '480p' | '360p';
-    max_stored_frame_rate: number;
-    aspect_ratio: string;
-    playback_ids: Array<{
-      id: string;
-      policy: 'public' | 'signed';
-    }>;
-    created_at: string;
-    updated_at: string;
-  }
   
   const videos: MuxAssetData[] = [
     {
-      asset_id: "4DqIYnSCVfc01oCM00EAlh6NGhC5gTIdGbVm01UPqMkGks",
-      title: "Movie",
+      id: "4DqIYnSCVfc01oCM00EAlh6NGhC5gTIdGbVm01UPqMkGks",
+      meta: {
+        title: "Hello",
+        thumbnail_url: ""
+      },
       status: "ready",
-      duration: 93.7937,
-      max_stored_resolution: "2160p",
+      duration_seconds: 93.7937,
+      max_resolution_tier: "2160p",
       max_stored_frame_rate: 29.97,
       aspect_ratio: "16:9",
       playback_ids: [{ id: "B4dWjZlfl7CgIS0298JukBTSdGAjbYwSh4SxLjd5y00Z8", policy: "public" }],
@@ -90,11 +77,14 @@ export default function WatchScreen() {
       updated_at: "2026-07-06T18:59:20Z",
     },
     {
-      asset_id: "8UToOTPoE5hQzM5ME1wCbVkynlgwzls2mpQfnxQimPU",
-      title: "Product",
+      id: "8UToOTPoE5hQzM5ME1wCbVkynlgwzls2mpQfnxQimPU",
+      meta: {
+        title: "Product",
+        thumbnail_url: ""
+      },
       status: "ready",
-      duration: 14.866667,
-      max_stored_resolution: "2160p",
+      duration_seconds: 14.866667,
+     max_resolution_tier: "2160p",
       max_stored_frame_rate: 30,
       aspect_ratio: "16:9",
       playback_ids: [{ id: "01YWjOnGB3qF1raEkOXoud00p00jdfyB6PVirtWLTlaqp00", policy: "public" }],
@@ -102,11 +92,14 @@ export default function WatchScreen() {
       updated_at: "2026-06-26T21:17:05Z",
     },
     {
-      asset_id: "aT6jE5Q8jZ2RZow01LwSpz2oYNw72kye02gYUP4re01SA4",
-      title: "Background",
+     id: "aT6jE5Q8jZ2RZow01LwSpz2oYNw72kye02gYUP4re01SA4",
+      meta: {
+       title: "Background",
+       thumbnail_url: ""
+      },
       status: "ready",
-      duration: 16.766756,
-      max_stored_resolution: "2160p",
+      duration_seconds: 16.766756,
+     max_resolution_tier: "2160p",
       max_stored_frame_rate: 23.976,
       aspect_ratio: "16:9",
       playback_ids: [{ id: "D26DVbfwv1Up01lNQtnhMSW602u4C02eTKVCtlr8ZrF01W4", policy: "public" }],
@@ -117,7 +110,7 @@ export default function WatchScreen() {
 
   
   const params = useLocalSearchParams<{ asset_id: string }>();
-  const video = videos.find(v => v.asset_id == params.asset_id);
+  const video = videos.find(v => v.id == params.asset_id);
   let videoSource =
     "https://stream.mux.com/" + video?.playback_ids[0].id;
 
@@ -139,6 +132,7 @@ export default function WatchScreen() {
 
   const player = useVideoPlayer({uri: videoSource, contentType: 'hls'}, (player) => {
     player.timeUpdateEventInterval = 0.5;
+    player.play()
   });
 
   const timeUpdate = useEvent(player, "timeUpdate");
@@ -246,7 +240,11 @@ export default function WatchScreen() {
               />
               <TouchableOpacity
                 style={styles.backButton}
-                onPress={() => router.back()}
+                onPress={() =>
+                {
+                  router.replace("/(app)")
+                  if(player.playing) player.pause()
+                }}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
                 <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
@@ -261,7 +259,7 @@ export default function WatchScreen() {
         <View style={styles.metaSection}>
           {/* Title */}
           <Text style={styles.videoTitle} numberOfLines={2}>
-            {video?.title}
+            {video?.meta.title}
           </Text>
 
           {/* Meta line: handle · likes · views · time · ...more */}
