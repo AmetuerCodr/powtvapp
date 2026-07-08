@@ -44,10 +44,10 @@ export default function AppTabs() {
         name="index"
             options={{
               headerShown: true,
-              headerStyle: { backgroundColor: "#000", height: insets.top + HEADER_ROW },
+              headerStyle: { backgroundColor: "#000", height: insets.top + HEADER_ROW, },
               headerStatusBarHeight: insets.top,
               headerTitleAlign: 'center',
-              headerTitleContainerStyle: { marginHorizontal: 10, alignItems: 'center', justifyContent: 'center' },
+              headerTitleContainerStyle: { marginHorizontal: 12, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
               headerTitle: () => (
                 <Image
                   source={require('../../../assets/images/pow-tv-logo-trimmed.png')}
