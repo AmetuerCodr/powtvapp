@@ -26,7 +26,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.powtv.app"
+      "package": "com.templeofradiantlight.powtv",
+      
     },
     "web": {
       "output": "static",
