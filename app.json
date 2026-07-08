@@ -8,7 +8,7 @@
     "scheme": "powtv",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/Splash.jpg",
+      "image": "./assets/images/Splash.png",
       "resizeMode": "contain"
     },
     "ios": {
@@ -51,8 +51,7 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
-      ],
-      "expo-image"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -63,6 +62,12 @@
       "eas": {
         "projectId": "4f4dc22f-8c9e-4a13-bcbb-0dfb598ffafb"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4f4dc22f-8c9e-4a13-bcbb-0dfb598ffafb"
     }
   }
 }
