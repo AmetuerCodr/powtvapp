@@ -157,7 +157,7 @@ export default function ImageGallery() {
   if (!fontsLoaded) return null;
 
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
+    <SafeAreaView style={styles.root} edges={[]}>
       <FlashList
         data={images}
         keyExtractor={(item) => item.id}
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 12,
-    paddingVertical: 20,
+    paddingBottom: 20,
   },
   card: {
     marginBottom: 20,
