@@ -3,7 +3,7 @@
     "name": "powtv",
     "slug": "powtv",
     "version": "1.0.0",
-    "orientation": "default",
+    "orientation": "default", 
     "icon": "./assets/images/icon.png",
     "scheme": "powtv",
     "userInterfaceStyle": "automatic",

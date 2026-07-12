@@ -76,7 +76,7 @@ function VideoCard({ item, index }: { item: MuxAssetData; index: number }) {
       {/* Thumbnail — cropped 16:9 like a YouTube thumbnail */}
       <View style={styles.thumbWrap}>
         <Image
-          source={{ uri: item.meta.thumbnail_url }}
+          source={{ uri: item.meta.thumbnail_url || `https://image.mux.com/${item.playback_ids[0].id}/thumbnail.webp` }}
           style={styles.thumb}
           cachePolicy="memory-disk"
           recyclingKey={item.id} // Fix image flickering
