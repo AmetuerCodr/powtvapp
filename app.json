@@ -3,7 +3,7 @@
     "name": "powtv",
     "slug": "powtv",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "powtv",
     "userInterfaceStyle": "automatic",
@@ -44,7 +44,15 @@
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,
