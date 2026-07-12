@@ -1,7 +1,9 @@
 import { Tabs } from "expo-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
+import { Image } from "expo-image";
+import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Home from "@/components/icons/Home";
 import Search from "@/components/icons/Search";
 import Watch from "@/components/icons/Watch";
@@ -18,15 +20,17 @@ const queryClient = new QueryClient({
 })
 
 
+const HEADER_ROW = 48; // logo row height (dp) below the status bar
+
 export default function AppTabs() {
+  const insets = useSafeAreaInsets();
   return (
      <GestureHandlerRootView style={{ flex: 1 }}>
     <QueryClientProvider client={queryClient}>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#FFFFFF",
-            tabBarInactiveTintColor: "#6B7280",
-
+        tabBarInactiveTintColor: "#6B7280",
         tabBarStyle: {
           backgroundColor: "#18181B",
           borderTopWidth: 0,
@@ -38,11 +42,27 @@ export default function AppTabs() {
     >
       <Tabs.Screen
         name="index"
-        options={{
+            options={{
+              headerShown: true,
+              headerStyle: { backgroundColor: "#000", height: insets.top + HEADER_ROW, },
+              headerStatusBarHeight: insets.top,
+              headerTitleAlign: 'center',
+              headerTitleContainerStyle: { marginHorizontal: 12, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
+              headerTitle: () => (
+                <Image
+                  source={require('../../../assets/images/pow-tv-logo-trimmed.png')}
+                  style={{ width: 156, height: 56 }}
+                  contentFit="contain"
+                />
+            ),
           title: "Home",
+
           sceneStyle: {
             backgroundColor: "#000",
-          },
+              },
+
+
+
           // tabBarStyle: { display: "none" },
           tabBarIcon: ({ color, size }) => (
             <Home width={size} height={size} color={color} />

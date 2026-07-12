@@ -4,7 +4,7 @@ import VideoControls from '@/components/VideoControls';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useEvent } from "expo";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 // Needed only because gesture callbacks run on the UI thread (see Gestures below).
 import { runOnJS } from "react-native-reanimated";
@@ -141,6 +141,13 @@ export default function WatchScreen() {
   useEffect(() => {
     console.log(player.currentTime)
   }, [player.currentTime])
+
+  // Pause whenever this screen loses focus (tab switch, navigating away, etc.)
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => player.pause();
+    }, [player])
+  );
 
 
   const onSeek = (seconds: number) => {

@@ -76,7 +76,7 @@ function VideoCard({ item, index }: { item: MuxAssetData; index: number }) {
       {/* Thumbnail — cropped 16:9 like a YouTube thumbnail */}
       <View style={styles.thumbWrap}>
         <Image
-          source={{ uri: item.meta.thumbnail_url }}
+          source={{ uri: item.meta.thumbnail_url || `https://image.mux.com/${item.playback_ids[0].id}/thumbnail.webp` }}
           style={styles.thumb}
           cachePolicy="memory-disk"
           recyclingKey={item.id} // Fix image flickering
@@ -157,7 +157,7 @@ export default function ImageGallery() {
   if (!fontsLoaded) return null;
 
   return (
-    <SafeAreaView style={styles.root} edges={['top']}>
+    <SafeAreaView style={styles.root} edges={[]}>
       <FlashList
         data={images}
         keyExtractor={(item) => item.id}
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 12,
-    paddingVertical: 20,
+    paddingBottom: 20,
   },
   card: {
     marginBottom: 20,
