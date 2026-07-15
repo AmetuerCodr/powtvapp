@@ -18,6 +18,8 @@ import {Link} from "expo-router"
 import { useVideoPlayer, VideoView } from "expo-video";
 import { View, Text, StyleSheet, useWindowDimensions, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from '@/utils/supabase';
+import { useQuery } from '@tanstack/react-query';
 
 // POWTV brand accents
 const GOLD = "#F5A100";
@@ -55,64 +57,28 @@ function getRelativeTime(isoString: string): string {
   return deltaSeconds >= 0 ? `${label} ago` : `in ${label}`;
 }
 
-
-
-
 export default function WatchScreen() {
-  
-  const videos: MuxAssetData[] = [
-    {
-      id: "4DqIYnSCVfc01oCM00EAlh6NGhC5gTIdGbVm01UPqMkGks",
-      meta: {
-        title: "Hello",
-        thumbnail_url: ""
-      },
-      status: "ready",
-      duration_seconds: 93.7937,
-      max_resolution_tier: "2160p",
-      max_stored_frame_rate: 29.97,
-      aspect_ratio: "16:9",
-      playback_ids: [{ id: "B4dWjZlfl7CgIS0298JukBTSdGAjbYwSh4SxLjd5y00Z8", policy: "public" }],
-      created_at: "2026-07-06T18:59:20Z",
-      updated_at: "2026-07-06T18:59:20Z",
-    },
-    {
-      id: "8UToOTPoE5hQzM5ME1wCbVkynlgwzls2mpQfnxQimPU",
-      meta: {
-        title: "Product",
-        thumbnail_url: ""
-      },
-      status: "ready",
-      duration_seconds: 14.866667,
-     max_resolution_tier: "2160p",
-      max_stored_frame_rate: 30,
-      aspect_ratio: "16:9",
-      playback_ids: [{ id: "01YWjOnGB3qF1raEkOXoud00p00jdfyB6PVirtWLTlaqp00", policy: "public" }],
-      created_at: "2026-06-26T21:17:05Z",
-      updated_at: "2026-06-26T21:17:05Z",
-    },
-    {
-     id: "aT6jE5Q8jZ2RZow01LwSpz2oYNw72kye02gYUP4re01SA4",
-      meta: {
-       title: "Background",
-       thumbnail_url: ""
-      },
-      status: "ready",
-      duration_seconds: 16.766756,
-     max_resolution_tier: "2160p",
-      max_stored_frame_rate: 23.976,
-      aspect_ratio: "16:9",
-      playback_ids: [{ id: "D26DVbfwv1Up01lNQtnhMSW602u4C02eTKVCtlr8ZrF01W4", policy: "public" }],
-      created_at: "2026-07-06T18:59:06Z",
-      updated_at: "2026-07-06T18:59:06Z",
-    },
-  ];
-
-  
   const params = useLocalSearchParams<{ asset_id: string }>();
-  const video = videos.find(v => v.id == params.asset_id);
-  let videoSource =
-    "https://stream.mux.com/" + video?.playback_ids[0].id;
+
+  // Fetch this asset's Mux row. react-query is already provided in (app)/_layout.
+  const { data: video, isLoading, error } = useQuery({
+    queryKey: ["mux-asset", params.asset_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .schema("mux")
+        .from("assets")
+        .select("*")
+        .eq("id", params.asset_id)
+        .single();
+      if (error) throw error;
+      return data as unknown as MuxAssetData; // ponytail: cast Json cols; tighten if meta/playback_ids shape drifts
+    },
+  });
+
+  // Mux is done only when status === "ready"; until then there's no playable stream.
+  const isReady = video?.status === "ready";
+  const playbackId = video?.playback_ids?.[0]?.id;
+  const videoSource = playbackId ? `https://stream.mux.com/${playbackId}.m3u8` : null;
 
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -130,10 +96,17 @@ export default function WatchScreen() {
   const [followed, setFollowed] = useState(false);
 
 
-  const player = useVideoPlayer({uri: videoSource, contentType: 'hls'}, (player) => {
+  // Source arrives async (after the query resolves), so create the player empty
+  // and load the stream in the effect below — single load path, no double-fetch.
+  const player = useVideoPlayer(null, (player) => {
     player.timeUpdateEventInterval = 0.5;
-    player.play()
   });
+
+  useEffect(() => {
+    if (!videoSource) return;
+    player.replace({ uri: videoSource, contentType: "hls" });
+    player.play();
+  }, [videoSource, player]);
 
   const timeUpdate = useEvent(player, "timeUpdate");
     const currentTime = timeUpdate?.currentTime ?? 0; // seconds
@@ -220,13 +193,14 @@ export default function WatchScreen() {
             ? styles.videoContainerLandscape  // flex: 1, fills remaining space after insets
             : styles.videoContainerPortrait   // width: '100%', aspectRatio: 16/9
           }>
+        {isReady ? (
         <GestureHandlerRootView >
           <GestureDetector gesture={Gesture.Exclusive(doubleTap, singleTap)}>
-            
+
           <VideoView
             player={player}
             style={styles.video}
-            contentFit="contain"    
+            contentFit="contain"
             nativeControls={false} // hide built-ins; you have custom VideoControls
           />
           </GestureDetector>
@@ -257,16 +231,34 @@ export default function WatchScreen() {
                 <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
               </TouchableOpacity>
             </>
-          
+
           )}
         </GestureHandlerRootView>
+        ) : (
+          <View style={styles.statusOverlay}>
+            <Text style={styles.statusText}>
+              {error
+                ? "Couldn't load this video."
+                : isLoading
+                ? "Loading…"
+                : "This video is still being prepared. Check back in a moment."}
+            </Text>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.replace("/(app)")}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            >
+              <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {!isLandscape && (
         <View style={styles.metaSection}>
           {/* Title */}
           <Text style={styles.videoTitle} numberOfLines={2}>
-            {video?.meta.title}
+            {video?.meta?.title}
           </Text>
 
           {/* Meta line: handle · likes · views · time · ...more */}
@@ -350,6 +342,21 @@ const styles = StyleSheet.create({
   video: {
     width: '100%',
     height: '100%'
+  },
+
+  // Shown while Mux is still processing, or on load/error — fills the video box.
+  statusOverlay: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  statusText: {
+    color: '#f1f1f1',
+    fontSize: 15,
+    textAlign: 'center',
   },
 
   // Back button overlay — absolute, sits above the video (transparent bg).

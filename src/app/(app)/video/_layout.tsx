@@ -11,21 +11,10 @@ export default function RootLayout() {
 
       }}
     >
-      {/*<Stack.Screen
-        name="[asset_id]" // file is video/[asset_id].tsx -> route name is just "[asset_id]"
-        options={{
-          headerShown: true, // turn header back on just here
-          headerTitle: "", // optional: hide title text, keep back button
-          headerStyle: { backgroundColor: "#18181B" },
-          headerTintColor: "#FFFFFF",
-        }}
-      />*/}
-
-
-
-
-
-  
+      {/* file is video/[asset_id].tsx -> route name is just "[asset_id]".
+          dangerouslySingular: keep only ONE video screen in the stack — switching
+          videos replaces it instead of piling A→B→C onto the (persistent) stack. */}
+      <Stack.Screen name="[asset_id]" dangerouslySingular />
     </Stack>
   );
 }
