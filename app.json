@@ -3,7 +3,7 @@
     "name": "powtv",
     "slug": "powtv",
     "version": "1.0.0",
-    "orientation": "default", 
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "powtv",
     "userInterfaceStyle": "automatic",
@@ -26,8 +26,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.templeofradiantlight.powtv",
-      
+      "package": "com.templeofradiantlight.powtv"
     },
     "web": {
       "output": "static",
@@ -52,7 +51,8 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
-      ]
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

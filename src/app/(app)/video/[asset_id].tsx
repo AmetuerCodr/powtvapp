@@ -10,8 +10,6 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { runOnJS } from "react-native-reanimated";
 
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
-
-
 const playbackSpeedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 import {Link} from "expo-router"
