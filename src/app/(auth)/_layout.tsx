@@ -5,9 +5,6 @@ export default function App() {
     <React.Fragment>
       <Stack
         screenOptions={{
-          // headerTransparent: true,
-          // headerTitle: () => null,
-          // title: "",
           headerShown: false,
           contentStyle: { backgroundColor: "#000" },
         }}

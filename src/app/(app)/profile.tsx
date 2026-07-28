@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Text, View, Pressable } from "react-native";
 import { useSession } from "@/context/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Profile() {
   const { signOut } = useSession();
@@ -20,6 +21,7 @@ export default function Profile() {
   }
 
   return (
+    <SafeAreaView className="flex-1" >
     <View className="text-white text-lg flex-1 justify-center items-center">
       <Text className="text-white">Profile</Text>
       <Pressable onPress={() => handleSignOut()}>
@@ -30,6 +32,7 @@ export default function Profile() {
           {error}
         </Text>
       ) : null}
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }

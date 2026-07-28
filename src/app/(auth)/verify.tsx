@@ -4,17 +4,11 @@ import {
   View,
   StyleSheet,
   Pressable,
-  ImageBackground,
 } from "react-native";
+import { ImageBackground, useImage } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  useFonts,
-  Sora_400Regular,
-  Sora_600SemiBold,
-  Sora_700Bold,
-} from "@expo-google-fonts/sora";
 import { supabase } from "@/utils/supabase";
 
 // Subtle film grain: a light-gray noise texture laid over the near-black
@@ -27,15 +21,10 @@ const BG = "#0B0B0B";
 type ResendStatus = "idle" | "sending" | "sent" | "error";
 
 export default function VerifyScreen() {
+  // Preload + decode once; ImageBackground gets a ready native ref.
+  const bg = useImage(noise);
   const { email } = useLocalSearchParams<{ email?: string }>();
   const [status, setStatus] = useState<ResendStatus>("idle");
-  const [fontsLoaded] = useFonts({
-    Sora_400Regular,
-    Sora_600SemiBold,
-    Sora_700Bold,
-  });
-
-  if (!fontsLoaded) return null;
 
   async function handleResend() {
     if (!email || status === "sending") return;
@@ -45,7 +34,7 @@ export default function VerifyScreen() {
   }
 
   return (
-    <ImageBackground source={noise} style={s.bg} resizeMode="cover">
+    <ImageBackground source={bg} style={s.bg} contentFit="cover">
       {/* Dark dim over the full-gray noise -> only a whisper of grain shows. */}
       <View style={s.dim} />
       <SafeAreaView style={s.safe} edges={["top", "left", "right"]}>

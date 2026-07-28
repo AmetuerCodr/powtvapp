@@ -2,22 +2,17 @@ import { useState } from "react";
 import {
   Text,
   View,
-  ImageBackground,
   StyleSheet,
   TextInput,
   Image,
   TouchableOpacity,
   Pressable,
 } from "react-native";
+import { ImageBackground, useImage } from "expo-image";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-  useFonts,
-  Sora_400Regular,
-  Sora_600SemiBold,
-  Sora_700Bold,
-} from "@expo-google-fonts/sora";
 import { Link } from "expo-router";
 import { useSession } from "@/context/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
 // import { supabase } from "@/n";
 const image = require("../../../assets/images/sign-in.jpg");
 const logo = require("../../../assets/images/pow-tv-fulllogo.png");
@@ -28,6 +23,8 @@ const INPUT_BG = "rgba(255,255,255,0.08)";
 const INPUT_BORDER = "rgba(255,255,255,0.18)";
 
 export default function SignInScreen() {
+  // Preload + decode once; ImageBackground gets a ready native ref.
+  const bg = useImage(image);
   const { logIn } = useSession();
   const { sendForgotPasswordLink } = useSession();
   const [showPassword, setShowPassword] = useState(false);
@@ -42,13 +39,6 @@ export default function SignInScreen() {
     | "error"
   >("idle");
   const [error, setError] = useState("");
-  const [fontsLoaded] = useFonts({
-    Sora_400Regular,
-    Sora_600SemiBold,
-    Sora_700Bold,
-  });
-
-  if (!fontsLoaded) return null;
 
   async function forgotPassword(email: string) {
     if (!email) throw new Error("email not found");
@@ -76,8 +66,11 @@ export default function SignInScreen() {
   }
 
   return (
+<SafeAreaView className="flex-1" >
+      
+
     <View style={s.container}>
-      <ImageBackground source={image} resizeMode="cover" style={s.bg}>
+      <ImageBackground source={bg} contentFit="cover" style={s.bg}>
         {/* Logo */}
         <View style={s.logoWrap}>
           <Image source={logo} style={s.logo} resizeMode="contain" />
@@ -188,7 +181,8 @@ export default function SignInScreen() {
           </Pressable>
         </View>
       </ImageBackground>
-    </View>
+      </View>
+</SafeAreaView>
   );
 }
 

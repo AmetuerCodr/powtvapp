@@ -8,20 +8,16 @@ import {
   TouchableOpacity,
   Dimensions,
   Pressable,
-  ImageBackground,
 } from "react-native";
+
+import SearchBackground from "@/components/search-background";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-  useFonts,
-  Sora_400Regular,
-  Sora_600SemiBold,
-  Sora_700Bold,
-} from "@expo-google-fonts/sora";
+import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 const CARD_W = (width - 48) / 2;
-const BG_IMAGE = require("../../../assets/images/search-bg.png");
 
 const GOLD = "#E8A020";
 
@@ -36,30 +32,29 @@ const CATEGORIES = [
 
 export default function SearchScreen() {
   const [query, setQuery] = useState("");
-  const [fontsLoaded] = useFonts({ Sora_400Regular, Sora_600SemiBold, Sora_700Bold });
-  if (!fontsLoaded) return null;
 
   return (
-    <ImageBackground source={BG_IMAGE} style={s.root} resizeMode="cover">
+    <View style={{flex: 1}} >
+      <SearchBackground />
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
-          contentContainerStyle={s.scroll}
+          contentContainerStyle={searchComponentStyle.scroll}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Header */}
-          <Text style={s.title}>Search</Text>
-          <Text style={s.subtitle}>Find worship, teachings and more</Text>
 
-          {/* Search bar */}
-          <View style={s.searchBar}>
+          <Text style={searchComponentStyle.title}>Search</Text>
+          <Text style={searchComponentStyle.subtitle}>Find worship, teachings and more</Text>
+
+
+          <View style={searchComponentStyle.searchBar}>
             <MaterialCommunityIcons name="magnify" size={22} color={GOLD} style={{ marginRight: 10 }} />
             <TextInput
               value={query}
               onChangeText={setQuery}
               placeholder="Faith over fear"
               placeholderTextColor="rgba(255,255,255,0.35)"
-              style={s.searchInput}
+              style={searchComponentStyle.searchInput}
             />
             {query.length > 0 && (
               <Pressable onPress={() => setQuery("")}>
@@ -68,34 +63,39 @@ export default function SearchScreen() {
             )}
           </View>
 
-          {/* Category grid */}
-          <View style={s.grid}>
+
+          <View style={searchComponentStyle.grid}>
             {CATEGORIES.map((cat) => (
-              <TouchableOpacity key={cat.label} activeOpacity={0.8} style={[s.cardWrap, { backgroundColor: cat.tint }]}>
-                <Text style={s.cardLabel}>{cat.label}</Text>
-                <MaterialCommunityIcons name={cat.icon as any} size={28} color={cat.iconColor} style={s.cardIcon} />
+              <TouchableOpacity
+                key={cat.label}
+                activeOpacity={0.8}
+                onPress={cat.label === "Shorts" ? () => router.push("/(app)/watch") : undefined}
+                style={[searchComponentStyle.cardWrap, { backgroundColor: cat.tint }]}
+              >
+                <Text style={searchComponentStyle.cardLabel}>{cat.label}</Text>
+                <MaterialCommunityIcons name={cat.icon as any} size={28} color={cat.iconColor} style={searchComponentStyle.cardIcon} />
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Featured */}
-          <TouchableOpacity activeOpacity={0.85} style={[s.featuredWrap, { backgroundColor: "rgba(80,5,0,0.7)" }]}>
-            <Text style={s.featuredTitle}>
+
+          <TouchableOpacity activeOpacity={0.85} style={[searchComponentStyle.featuredWrap, { backgroundColor: "rgba(80,5,0,0.7)" }]}>
+            <Text style={searchComponentStyle.featuredTitle}>
               THE <Text style={{ color: "#CC2200" }}>LOST</Text> PRACTICE
             </Text>
-            <Text style={s.featuredSub}>We Desperately Need Again!</Text>
-            <View style={s.featuredFooter}>
-              <Text style={s.featuredSmall}>TEMPLE OF RADIANT LIGHT</Text>
-              <Text style={[s.featuredSmall, { textAlign: "right" }]}>Bishop Shammah{"\n"}Womack-El</Text>
+            <Text style={searchComponentStyle.featuredSub}>We Desperately Need Again!</Text>
+            <View style={searchComponentStyle.featuredFooter}>
+              <Text style={searchComponentStyle.featuredSmall}>TEMPLE OF RADIANT LIGHT</Text>
+              <Text style={[searchComponentStyle.featuredSmall, { textAlign: "right" }]}>Bishop Shammah{"\n"}Womack-El</Text>
             </View>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
-    </ImageBackground>
+    </View>
   );
 }
 
-const s = StyleSheet.create({
+const searchComponentStyle = StyleSheet.create({
   root: { flex: 1 },
   scroll: { paddingHorizontal: 16, paddingBottom: 40 },
 

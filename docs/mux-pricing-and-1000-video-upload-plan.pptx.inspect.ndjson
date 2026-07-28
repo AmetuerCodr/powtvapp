@@ -1,0 +1,219 @@
+{"kind":"deck","id":"pr/nrke3q","name":"Deck"}
+{"kind":"layout","layoutId":"290a9b8a-740f-4582-bf1c-f49997fc8f53","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"9b8ebf20-deec-4f91-a89c-8a118efecf1b","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/g9cntn","slide":1,"title":"POWTV · VIDEO OPERATIONS","textShapes":6}
+{"kind":"shape","id":"sh/7ex8jid4","slide":1,"bbox":[0,0,18,720]}
+{"kind":"textbox","id":"sh/8zqpcnup","slide":1,"text":"POWTV · VIDEO OPERATIONS","textPreview":"POWTV · VIDEO OPERATIONS","textChars":24,"textLines":1,"bbox":[54,46,420,24]}
+{"kind":"textbox","id":"sh/t0zqlsva","slide":1,"text":"A measured Mux migration\nfor 1,000+ videos","textPreview":"A measured Mux migration | for 1,000+ videos","textChars":42,"textLines":2,"bbox":[54,176,730,180]}
+{"kind":"textbox","id":"sh/y9o76dcn","slide":1,"text":"Cost model, quality controls, and a staged ingest plan","textPreview":"Cost model, quality controls, and a staged ingest plan","textChars":54,"textLines":1,"bbox":[54,400,690,62]}
+{"kind":"shape","id":"sh/jaxofyd8","slide":1,"bbox":[890,152,348,360]}
+{"kind":"textbox","id":"sh/kb6p83ut","slide":1,"text":"1,000+","textPreview":"1,000+","textChars":6,"textLines":1,"bbox":[930,229,270,90]}
+{"kind":"textbox","id":"sh/lcfqh8vy","slide":1,"text":"video files\nplanned in waves","textPreview":"video files | planned in waves","textChars":28,"textLines":2,"bbox":[930,332,270,86]}
+{"kind":"shape","id":"sh/a5472tcb","slide":1,"bbox":[1005,40,233,78]}
+{"kind":"textbox","id":"sh/7adkru18","slide":1,"text":"Planning model · July 2026","textPreview":"Planning model · July 2026","textChars":26,"textLines":1,"bbox":[54,638,400,24]}
+{"kind":"image","id":"im/ut43idsj","slide":1,"name":"","alt":"POWtv logo","bbox":[1015,48,213,62]}
+{"kind":"notes","id":"nt/g9cntn","slide":1,"text":"[Sources]\n- Internal planning brief; no external claim on this slide."}
+{"kind":"slide","id":"sl/u2bg5t","slide":2,"title":"COST MODEL","textShapes":17}
+{"kind":"textbox","id":"sh/xgnqpkne","slide":2,"text":"COST MODEL","textPreview":"COST MODEL","textChars":10,"textLines":1,"bbox":[42,35,420,24]}
+{"kind":"textbox","id":"sh/atc7e54n","slide":2,"text":"Mux bills three kinds of minutes","textPreview":"Mux bills three kinds of minutes","textChars":32,"textLines":1,"bbox":[42,77,1030,82]}
+{"kind":"shape","id":"sh/bul8na58","slide":2,"bbox":[42,159,88,6]}
+{"kind":"textbox","id":"sh/orupcfmh","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1180,662,55,20]}
+{"kind":"shape","id":"sh/9s3qlkn2","slide":2,"bbox":[1090,32,148,53]}
+{"kind":"textbox","id":"sh/nql8ja5w","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[42,210,74,56]}
+{"kind":"textbox","id":"sh/0nap8vml","slide":2,"text":"INPUT","textPreview":"INPUT","textChars":5,"textLines":1,"bbox":[42,284,300,28]}
+{"kind":"textbox","id":"sh/1o3qh0n6","slide":2,"text":"Encode once","textPreview":"Encode once","textChars":11,"textLines":1,"bbox":[42,330,330,42]}
+{"kind":"textbox","id":"sh/1crih4bm","slide":2,"text":"Asset duration × input rate","textPreview":"Asset duration × input rate","textChars":27,"textLines":1,"bbox":[42,386,330,80]}
+{"kind":"shape","id":"sh/0bi18zu1","slide":2,"bbox":[419,222,1,320]}
+{"kind":"textbox","id":"sh/fap0fetg","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[447,210,74,56]}
+{"kind":"textbox","id":"sh/e9gj69cb","slide":2,"text":"STORAGE","textPreview":"STORAGE","textChars":7,"textLines":1,"bbox":[447,284,300,28]}
+{"kind":"textbox","id":"sh/d87id4bq","slide":2,"text":"Keep monthly","textPreview":"Keep monthly","textChars":12,"textLines":1,"bbox":[447,330,330,42]}
+{"kind":"textbox","id":"sh/s7y14zu5","slide":2,"text":"Stored duration × monthly rate","textPreview":"Stored duration × monthly rate","textChars":30,"textLines":1,"bbox":[447,386,330,80]}
+{"kind":"shape","id":"sh/r6p0butk","slide":2,"bbox":[824,222,1,320]}
+{"kind":"textbox","id":"sh/q5gj2pcz","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[852,210,74,56]}
+{"kind":"textbox","id":"sh/547i9kbe","slide":2,"text":"DELIVERY","textPreview":"DELIVERY","textChars":8,"textLines":1,"bbox":[852,284,300,28]}
+{"kind":"textbox","id":"sh/4je10fut","slide":2,"text":"Stream monthly","textPreview":"Stream monthly","textChars":14,"textLines":1,"bbox":[852,330,330,42]}
+{"kind":"textbox","id":"sh/gz29cj61","slide":2,"text":"Delivered seconds ÷ 60 × rate","textPreview":"Delivered seconds ÷ 60 × rate","textChars":29,"textLines":1,"bbox":[852,386,330,80]}
+{"kind":"shape","id":"sh/h0balo7m","slide":2,"bbox":[42,525,1196,78]}
+{"kind":"textbox","id":"sh/uxkra9ov","slide":2,"text":"The first 100,000 delivered minutes each month are free. Buffered or preloaded seconds can still count as delivery.","textPreview":"The first 100,000 delivered minutes each month are free. Buffered or preloaded seconds can still count as delivery.","textChars":115,"textLines":1,"bbox":[70,545,1140,40]}
+{"kind":"textbox","id":"sh/vytsjepg","slide":2,"text":"Sources in notes · public list rates accessed Jul 25, 2026","textPreview":"Sources in notes · public list rates accessed Jul 25, 2026","textChars":58,"textLines":1,"bbox":[42,660,850,20]}
+{"kind":"image","id":"im/jeds3q9k","slide":2,"name":"","alt":"POWtv logo","bbox":[1100,40,128,37]}
+{"kind":"notes","id":"nt/u2bg5t","slide":2,"text":"[Sources]\n- Mux, “Understanding Mux Pricing,” https://www.mux.com/docs/pricing/overview (accessed Jul 25, 2026)."}
+{"kind":"slide","id":"sl/1llo67","slide":3,"title":"CURRENT RATES","textShapes":29}
+{"kind":"textbox","id":"sh/76l4ry50","slide":3,"text":"CURRENT RATES","textPreview":"CURRENT RATES","textChars":13,"textLines":1,"bbox":[42,35,420,24]}
+{"kind":"textbox","id":"sh/87e5kjm5","slide":3,"text":"Minutes and quality—not file count—set the price curve","textPreview":"Minutes and quality—not file count—set the price curve","textChars":54,"textLines":1,"bbox":[42,77,1030,82]}
+{"kind":"shape","id":"sh/98nmtonq","slide":3,"bbox":[42,159,88,6]}
+{"kind":"textbox","id":"sh/yhcne943","slide":3,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1180,662,55,20]}
+{"kind":"shape","id":"sh/z2l4ne5o","slide":3,"bbox":[1090,32,148,53]}
+{"kind":"textbox","id":"sh/l43mponu","slide":3,"text":"First public volume band · USD per minute · 720p / 1080p","textPreview":"First public volume band · USD per minute · 720p / 1080p","textChars":56,"textLines":1,"bbox":[42,190,650,28]}
+{"kind":"textbox","id":"sh/idwnqd4n","slide":3,"text":"BASIC","textPreview":"BASIC","textChars":5,"textLines":1,"bbox":[42,237,340,34]}
+{"kind":"textbox","id":"sh/jy54zi58","slide":3,"text":"Simple archive / UGC","textPreview":"Simple archive / UGC","textChars":20,"textLines":1,"bbox":[42,284,340,58]}
+{"kind":"textbox","id":"sh/j6tcfmlo","slide":3,"text":"Input","textPreview":"Input","textChars":5,"textLines":1,"bbox":[42,378,150,22]}
+{"kind":"textbox","id":"sh/i5kvmh43","slide":3,"text":"FREE / FREE","textPreview":"FREE / FREE","textChars":11,"textLines":1,"bbox":[42,403,340,29]}
+{"kind":"textbox","id":"sh/58buhw3e","slide":3,"text":"Storage / month","textPreview":"Storage / month","textChars":15,"textLines":1,"bbox":[42,448,150,22]}
+{"kind":"textbox","id":"sh/472dormt","slide":3,"text":"$0.0024 / $0.0030","textPreview":"$0.0024 / $0.0030","textChars":17,"textLines":1,"bbox":[42,473,340,29]}
+{"kind":"textbox","id":"sh/rudcj6lk","slide":3,"text":"Delivery","textPreview":"Delivery","textChars":8,"textLines":1,"bbox":[42,518,150,22]}
+{"kind":"textbox","id":"sh/694vq14z","slide":3,"text":"$0.0008 / $0.0010","textPreview":"$0.0008 / $0.0010","textChars":17,"textLines":1,"bbox":[42,543,340,29]}
+{"kind":"shape","id":"sh/twvulg3q","slide":3,"bbox":[422,226,1,360]}
+{"kind":"textbox","id":"sh/svmdsbm5","slide":3,"text":"PLUS","textPreview":"PLUS","textChars":4,"textLines":1,"bbox":[447,237,340,34]}
+{"kind":"textbox","id":"sh/fydcn6lw","slide":3,"text":"Professional / branded","textPreview":"Professional / branded","textChars":22,"textLines":1,"bbox":[447,284,340,58]}
+{"kind":"textbox","id":"sh/ex4vu14b","slide":3,"text":"Input","textPreview":"Input","textChars":5,"textLines":1,"bbox":[447,378,150,22]}
+{"kind":"textbox","id":"sh/qt8fm5oj","slide":3,"text":"$0.0250 / $0.03125","textPreview":"$0.0250 / $0.03125","textChars":18,"textLines":1,"bbox":[447,403,340,29]}
+{"kind":"textbox","id":"sh/buhgfa54","slide":3,"text":"Storage / month","textPreview":"Storage / month","textChars":15,"textLines":1,"bbox":[447,448,150,22]}
+{"kind":"textbox","id":"sh/cvqxof69","slide":3,"text":"$0.0024 / $0.0030","textPreview":"$0.0024 / $0.0030","textChars":17,"textLines":1,"bbox":[447,473,340,29]}
+{"kind":"textbox","id":"sh/dwzyhknu","slide":3,"text":"Delivery","textPreview":"Delivery","textChars":8,"textLines":1,"bbox":[447,518,150,22]}
+{"kind":"textbox","id":"sh/2pofi5o7","slide":3,"text":"$0.0008 / $0.0010","textPreview":"$0.0008 / $0.0010","textChars":17,"textLines":1,"bbox":[447,543,340,29]}
+{"kind":"shape","id":"sh/3qxgba5s","slide":3,"bbox":[827,226,1,360]}
+{"kind":"textbox","id":"sh/or6xkf6d","slide":3,"text":"PREMIUM","textPreview":"PREMIUM","textChars":7,"textLines":1,"bbox":[852,237,340,34]}
+{"kind":"textbox","id":"sh/pszyd0ny","slide":3,"text":"Studio / cinematic","textPreview":"Studio / cinematic","textChars":18,"textLines":1,"bbox":[852,284,340,58]}
+{"kind":"textbox","id":"sh/mlsfupor","slide":3,"text":"Input","textPreview":"Input","textChars":5,"textLines":1,"bbox":[852,378,150,22]}
+{"kind":"textbox","id":"sh/nm1gnu5w","slide":3,"text":"$0.0375 / $0.046875","textPreview":"$0.0375 / $0.046875","textChars":19,"textLines":1,"bbox":[852,403,340,29]}
+{"kind":"textbox","id":"sh/hg3ito7e","slide":3,"text":"Storage / month","textPreview":"Storage / month","textChars":15,"textLines":1,"bbox":[852,448,150,22]}
+{"kind":"textbox","id":"sh/wfu1k3qt","slide":3,"text":"$0.0036 / $0.0045","textPreview":"$0.0036 / $0.0045","textChars":17,"textLines":1,"bbox":[852,473,340,29]}
+{"kind":"textbox","id":"sh/vel0ryp8","slide":3,"text":"Delivery","textPreview":"Delivery","textChars":8,"textLines":1,"bbox":[852,518,150,22]}
+{"kind":"textbox","id":"sh/adcjit8n","slide":3,"text":"$0.0012 / $0.0015","textPreview":"$0.0012 / $0.0015","textChars":17,"textLines":1,"bbox":[852,543,340,29]}
+{"kind":"textbox","id":"sh/9s3ipo72","slide":3,"text":"Sources in notes · first-band public list rates · verify at procurement","textPreview":"Sources in notes · first-band public list rates · verify at procurement","textChars":71,"textLines":1,"bbox":[42,660,850,20]}
+{"kind":"image","id":"im/tkrip43e","slide":3,"name":"","alt":"POWtv logo","bbox":[1100,40,128,37]}
+{"kind":"notes","id":"nt/1llo67","slide":3,"text":"[Sources]\n- Mux, “Understanding Mux Pricing,” detailed rate tables, https://www.mux.com/docs/pricing/overview (accessed Jul 25, 2026).\n- Mux, “Use different video quality levels,” https://www.mux.com/docs/guides/use-video-quality-levels (accessed Jul 25, 2026).\n- Official-source caveat: Mux’s marketing pricing page lists a different Premium 720p input figure; this model uses the detailed documentation table and should be reconfirmed before purchase."}
+{"kind":"slide","id":"sl/814ouw","slide":4,"title":"SCENARIO MODEL","textShapes":15}
+{"kind":"textbox","id":"sh/szu9wrud","slide":4,"text":"SCENARIO MODEL","textPreview":"SCENARIO MODEL","textChars":14,"textLines":1,"bbox":[42,35,420,24]}
+{"kind":"textbox","id":"sh/7y18nmds","slide":4,"text":"1,000 videos: ~$72–$1,581 per month","textPreview":"1,000 videos: ~$72–$1,581 per month","textChars":35,"textLines":1,"bbox":[42,77,1030,82]}
+{"kind":"shape","id":"sh/6xsru1cn","slide":4,"bbox":[42,159,88,6]}
+{"kind":"textbox","id":"sh/5wjqlwv2","slide":4,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1180,662,55,20]}
+{"kind":"shape","id":"sh/kva9sreh","slide":4,"bbox":[1090,32,148,53]}
+{"kind":"textbox","id":"sh/psnaxgv6","slide":4,"text":"MODEL ASSUMPTIONS","textPreview":"MODEL ASSUMPTIONS","textChars":17,"textLines":1,"bbox":[790,216,400,28]}
+{"kind":"textbox","id":"sh/4re9obul","slide":4,"text":"Lean archive","textPreview":"Lean archive","textChars":12,"textLines":1,"bbox":[790,266,180,28]}
+{"kind":"textbox","id":"sh/ql0zy9oz","slide":4,"text":"1,000 × 30 min\nBasic · 720p\n100K delivery min/mo","textPreview":"1,000 × 30 min | Basic · 720p | 100K delivery min/mo","textChars":48,"textLines":3,"bbox":[790,297,240,62]}
+{"kind":"textbox","id":"sh/bm907e54","slide":4,"text":"Input once\n$0","textPreview":"Input once | $0","textChars":13,"textLines":2,"bbox":[1054,266,150,58]}
+{"kind":"shape","id":"sh/cnih0j6p","slide":4,"bbox":[790,363,414,1]}
+{"kind":"textbox","id":"sh/dori9ona","slide":4,"text":"Recommended","textPreview":"Recommended","textChars":11,"textLines":1,"bbox":[790,374,180,28]}
+{"kind":"textbox","id":"sh/2hgzupon","slide":4,"text":"1,000 × 45 min\nPlus · 1080p\n250K delivery min/mo","textPreview":"1,000 × 45 min | Plus · 1080p | 250K delivery min/mo","textChars":48,"textLines":3,"bbox":[790,405,240,62]}
+{"kind":"textbox","id":"sh/3i903u58","slide":4,"text":"Input once\n$1,305","textPreview":"Input once | $1,305","textChars":17,"textLines":2,"bbox":[1054,374,150,58]}
+{"kind":"shape","id":"sh/ojihwz6t","slide":4,"bbox":[790,471,414,1]}
+{"kind":"textbox","id":"sh/pkri54ne","slide":4,"text":"Premium reach","textPreview":"Premium reach","textChars":13,"textLines":1,"bbox":[790,482,180,28]}
+{"kind":"textbox","id":"sh/mdkj6tor","slide":4,"text":"1,000 × 60 min\nPremium · 1080p\n1M delivery min/mo","textPreview":"1,000 × 60 min | Premium · 1080p | 1M delivery min/mo","textChars":49,"textLines":3,"bbox":[790,513,240,62]}
+{"kind":"textbox","id":"sh/net0fy5c","slide":4,"text":"Input once\n$2,590","textPreview":"Input once | $2,590","textChars":17,"textLines":2,"bbox":[1054,482,150,58]}
+{"kind":"textbox","id":"sh/jylw7qlo","slide":4,"text":"Illustrative assumptions—not POWTV inventory facts. Recurring = storage + delivery; excludes plan fees, credits, add-ons, and tax.","textPreview":"Illustrative assumptions—not POWTV inventory facts. Recurring = storage + delivery; excludes plan fees, credits, add-ons, and tax.","textChars":130,"textLines":1,"bbox":[42,611,1160,35]}
+{"kind":"textbox","id":"sh/ixcfyl4j","slide":4,"text":"Sources in notes · pricing tables + scenario math","textPreview":"Sources in notes · pricing tables + scenario math","textChars":49,"textLines":1,"bbox":[42,660,850,20]}
+{"kind":"chart","id":"ch/ehk3udo3","slide":4,"name":"","chartType":"bar","bbox":[42,212,690,365]}
+{"kind":"image","id":"im/mhg7m987","slide":4,"name":"","alt":"POWtv logo","bbox":[1100,40,128,37]}
+{"kind":"notes","id":"nt/814ouw","slide":4,"text":"[Sources]\n- Mux, “Understanding Mux Pricing,” input, storage, delivery tables and 100K free delivery allowance, https://www.mux.com/docs/pricing/overview (accessed Jul 25, 2026).\n- Scenario math is calculated from the cited tiered public rates. Assumptions are visible on-slide and are not claims about POWTV’s actual inventory."}
+{"kind":"slide","id":"sl/s95cb2","slide":5,"title":"RECOMMENDATION","textShapes":17}
+{"kind":"textbox","id":"sh/6pwrelob","slide":5,"text":"RECOMMENDATION","textPreview":"RECOMMENDATION","textChars":14,"textLines":1,"bbox":[42,35,420,24]}
+{"kind":"textbox","id":"sh/tcna90nm","slide":5,"text":"Default to Plus 1080p—and earn exceptions","textPreview":"Default to Plus 1080p—and earn exceptions","textChars":41,"textLines":1,"bbox":[42,77,1030,82]}
+{"kind":"shape","id":"sh/sbe9gv6h","slide":5,"bbox":[42,159,88,6]}
+{"kind":"textbox","id":"sh/fe5sba5s","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1180,662,55,20]}
+{"kind":"shape","id":"sh/edwri5o7","slide":5,"bbox":[1090,32,148,53]}
+{"kind":"textbox","id":"sh/gfe9kf6d","slide":5,"text":"PLUS\n1080p","textPreview":"PLUS | 1080p","textChars":10,"textLines":2,"bbox":[42,225,380,122]}
+{"kind":"textbox","id":"sh/3ipsfa54","slide":5,"text":"A strong default for sermons and branded programming, without paying Premium rates across the entire library.","textPreview":"A strong default for sermons and branded programming, without paying Premium rates across the entire library.","textChars":109,"textLines":1,"bbox":[42,377,420,110]}
+{"kind":"shape","id":"sh/2hgrm5oj","slide":5,"bbox":[42,520,420,68]}
+{"kind":"textbox","id":"sh/ob65c7ep","slide":5,"text":"Use Basic for low-priority archive; Premium only where visual fidelity is visibly material.","textPreview":"Use Basic for low-priority archive; Premium only where visual fidelity is visibly material.","textChars":91,"textLines":1,"bbox":[62,537,382,38]}
+{"kind":"shape","id":"sh/pcf65cva","slide":5,"bbox":[515,214,1,390]}
+{"kind":"textbox","id":"sh/29onaxwj","slide":5,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[560,220,54,28]}
+{"kind":"textbox","id":"sh/naxo32d4","slide":5,"text":"Cap routine ingest at 1080p","textPreview":"Cap routine ingest at 1080p","textChars":27,"textLines":1,"bbox":[625,220,560,50]}
+{"kind":"shape","id":"sh/cf65grel","slide":5,"bbox":[560,273,625,1]}
+{"kind":"textbox","id":"sh/xgz69wv6","slide":5,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[560,294,54,28]}
+{"kind":"textbox","id":"sh/adonehwf","slide":5,"text":"Let Automatic Cold Storage discount idle assets","textPreview":"Let Automatic Cold Storage discount idle assets","textChars":47,"textLines":1,"bbox":[625,294,560,50]}
+{"kind":"shape","id":"sh/bexo7md0","slide":5,"bbox":[560,347,625,1]}
+{"kind":"textbox","id":"sh/kjqpkrex","slide":5,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[560,368,54,28]}
+{"kind":"textbox","id":"sh/l4z6dwv2","slide":5,"text":"Avoid aggressive preload; delivered buffer still bills","textPreview":"Avoid aggressive preload; delivered buffer still bills","textChars":54,"textLines":1,"bbox":[625,368,560,50]}
+{"kind":"shape","id":"sh/t0v6xwnm","slide":5,"bbox":[560,421,625,1]}
+{"kind":"textbox","id":"sh/8zm5or61","slide":5,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[560,442,54,28]}
+{"kind":"textbox","id":"sh/7ydovm5g","slide":5,"text":"Tag quality and source metadata before migration","textPreview":"Tag quality and source metadata before migration","textChars":48,"textLines":1,"bbox":[625,442,560,50]}
+{"kind":"shape","id":"sh/6x4nmhov","slide":5,"bbox":[560,495,625,1]}
+{"kind":"textbox","id":"sh/h4f61wni","slide":5,"text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[560,516,54,28]}
+{"kind":"textbox","id":"sh/g365sbmx","slide":5,"text":"Set a monthly delivery alert and review top assets","textPreview":"Set a monthly delivery alert and review top assets","textChars":50,"textLines":1,"bbox":[625,516,560,50]}
+{"kind":"textbox","id":"sh/f2xoz65c","slide":5,"text":"Sources in notes · public list rates accessed Jul 25, 2026","textPreview":"Sources in notes · public list rates accessed Jul 25, 2026","textChars":58,"textLines":1,"bbox":[42,660,850,20]}
+{"kind":"image","id":"im/0ripcj6x","slide":5,"name":"","alt":"POWtv logo","bbox":[1100,40,128,37]}
+{"kind":"notes","id":"nt/s95cb2","slide":5,"text":"[Sources]\n- Mux, “Understanding Mux Pricing,” quality positioning, delivery accounting, and Automatic Cold Storage discounts, https://www.mux.com/docs/pricing/overview (accessed Jul 25, 2026).\n- Mux, “Use different video quality levels,” https://www.mux.com/docs/guides/use-video-quality-levels (accessed Jul 25, 2026).\n- The Plus 1080p default and exception policy are recommendations for POWTV, not Mux requirements."}
+{"kind":"slide","id":"sl/jedla3","slide":6,"title":"BULK INGEST","textShapes":23}
+{"kind":"textbox","id":"sh/dorqx83u","slide":6,"text":"BULK INGEST","textPreview":"BULK INGEST","textChars":11,"textLines":1,"bbox":[42,35,420,24]}
+{"kind":"textbox","id":"sh/q1g72d4j","slide":6,"text":"The event backbone exists; ingest is still a stub","textPreview":"The event backbone exists; ingest is still a stub","textChars":49,"textLines":1,"bbox":[42,77,1030,82]}
+{"kind":"shape","id":"sh/r298vilo","slide":6,"bbox":[42,159,88,6]}
+{"kind":"textbox","id":"sh/4zyp03md","slide":6,"text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1180,662,55,20]}
+{"kind":"shape","id":"sh/507qt83y","slide":6,"bbox":[1090,32,148,53]}
+{"kind":"shape","id":"sh/3yp8ry5s","slide":6,"bbox":[42,191,1196,70]}
+{"kind":"textbox","id":"sh/gvypw3m1","slide":6,"text":"CURRENT","textPreview":"CURRENT","textChars":7,"textLines":1,"bbox":[64,211,100,22]}
+{"kind":"textbox","id":"sh/hw7qponm","slide":6,"text":"Present: Mux webhook processor + workflow queue cron","textPreview":"Present: Mux webhook processor + workflow queue cron","textChars":52,"textLines":1,"bbox":[175,207,450,28]}
+{"kind":"textbox","id":"sh/90bmxofe","slide":6,"text":"Missing: production asset/direct-upload endpoint","textPreview":"Missing: production asset/direct-upload endpoint","textChars":48,"textLines":1,"bbox":[715,207,455,28]}
+{"kind":"textbox","id":"sh/8z254jyt","slide":6,"text":"PROPOSED MIGRATION PATH","textPreview":"PROPOSED MIGRATION PATH","textChars":23,"textLines":1,"bbox":[42,305,360,26]}
+{"kind":"textbox","id":"sh/nyt4vex8","slide":6,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[250,410,38,42]}
+{"kind":"textbox","id":"sh/mdkn29g3","slide":6,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[490,410,38,42]}
+{"kind":"textbox","id":"sh/lcbmt4fi","slide":6,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[730,410,38,42]}
+{"kind":"textbox","id":"sh/0bi50zyx","slide":6,"text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[970,410,38,42]}
+{"kind":"shape","id":"sh/za94rexc","slide":6,"bbox":[42,359,205,165]}
+{"kind":"textbox","id":"sh/y90ny9gr","slide":6,"text":"Inventory","textPreview":"Inventory","textChars":9,"textLines":1,"bbox":[62,385,165,30]}
+{"kind":"textbox","id":"sh/d8rmp4f6","slide":6,"text":"URL, duration,\nquality, rights","textPreview":"URL, duration, | quality, rights","textChars":30,"textLines":2,"bbox":[62,432,165,62]}
+{"kind":"shape","id":"sh/c7ilwzyl","slide":6,"bbox":[282,359,205,165]}
+{"kind":"textbox","id":"sh/4rm5cz6h","slide":6,"text":"Queue","textPreview":"Queue","textChars":5,"textLines":1,"bbox":[302,385,165,30]}
+{"kind":"textbox","id":"sh/5svm54n2","slide":6,"text":"One job per file\n+ retries","textPreview":"One job per file | + retries","textChars":26,"textLines":2,"bbox":[302,432,165,62]}
+{"kind":"shape","id":"sh/ip4napor","slide":6,"bbox":[522,359,205,165]}
+{"kind":"textbox","id":"sh/3qd43u5w","slide":6,"text":"Mux ingest","textPreview":"Mux ingest","textChars":10,"textLines":1,"bbox":[542,385,165,30]}
+{"kind":"textbox","id":"sh/gn258z6l","slide":6,"text":"Create Asset or\nDirect Upload","textPreview":"Create Asset or | Direct Upload","textChars":29,"textLines":2,"bbox":[542,432,165,62]}
+{"kind":"shape","id":"sh/hobm1476","slide":6,"bbox":[762,359,205,165]}
+{"kind":"textbox","id":"sh/ulkn6pof","slide":6,"text":"Webhooks","textPreview":"Webhooks","textChars":8,"textLines":1,"bbox":[782,385,165,30]}
+{"kind":"textbox","id":"sh/vmt4zup0","slide":6,"text":"asset.ready /\nasset.errored","textPreview":"asset.ready / | asset.errored","textChars":27,"textLines":2,"bbox":[782,432,165,62]}
+{"kind":"shape","id":"sh/0j65kj6p","slide":6,"bbox":[1002,359,205,165]}
+{"kind":"textbox","id":"sh/1kf6dona","slide":6,"text":"POWTV DB","textPreview":"POWTV DB","textChars":8,"textLines":1,"bbox":[1022,385,165,30]}
+{"kind":"textbox","id":"sh/vq1gzmto","slide":6,"text":"Asset + Playback ID\n+ readiness","textPreview":"Asset + Playback ID | + readiness","textChars":31,"textLines":2,"bbox":[1022,432,165,62]}
+{"kind":"textbox","id":"sh/apszqhc3","slide":6,"text":"Webhook handlers should verify signatures, return 2xx quickly, and be idempotent; do not poll asset status at scale.","textPreview":"Webhook handlers should verify signatures, return 2xx quickly, and be idempotent; do not poll asset status at scale.","textChars":116,"textLines":1,"bbox":[42,570,1160,36]}
+{"kind":"textbox","id":"sh/xsjy1wbu","slide":6,"text":"Sources in notes · repo + official Mux implementation guidance","textPreview":"Sources in notes · repo + official Mux implementation guidance","textChars":62,"textLines":1,"bbox":[42,660,850,20]}
+{"kind":"image","id":"im/fudojm1o","slide":6,"name":"","alt":"POWtv logo","bbox":[1100,40,128,37]}
+{"kind":"notes","id":"nt/jedla3","slide":6,"text":"[Sources]\n- Current repo: /Users/gadgetguy/powtv-new/supabase/functions/mux-create-asset/index.ts (placeholder response), /Users/gadgetguy/powtv-new/supabase/functions/mux-webhook/index.ts, and /Users/gadgetguy/powtv-new/supabase/functions/process-queue-cron/index.ts (inspected Jul 25, 2026).\n- Mux, “Upload files directly,” https://www.mux.com/docs/guides/upload-files-directly (accessed Jul 25, 2026).\n- Mux, “Migrate from self-managed video infrastructure,” https://www.mux.com/docs/guides/migrate-from-self-managed (accessed Jul 25, 2026).\n- Mux, “Listen for webhooks,” https://www.mux.com/docs/core/listen-for-webhooks (accessed Jul 25, 2026).\n- Mux, “Verify webhook signatures,” https://www.mux.com/docs/core/verify-webhook-signatures (accessed Jul 25, 2026)."}
+{"kind":"slide","id":"sl/3yftq0","slide":7,"title":"STAGED ROLLOUT","textShapes":21}
+{"kind":"textbox","id":"sh/bulgjil0","slide":7,"text":"STAGED ROLLOUT","textPreview":"STAGED ROLLOUT","textChars":14,"textLines":1,"bbox":[42,35,420,24]}
+{"kind":"textbox","id":"sh/wvuhsnml","slide":7,"text":"Pilot → batches → full library, with a gate at every step","textPreview":"Pilot → batches → full library, with a gate at every step","textChars":57,"textLines":1,"bbox":[42,77,1030,82]}
+{"kind":"shape","id":"sh/xw3yl836","slide":7,"bbox":[42,159,88,6]}
+{"kind":"textbox","id":"sh/mpsfmt4j","slide":7,"text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1180,662,55,20]}
+{"kind":"shape","id":"sh/nq1gfy5o","slide":7,"bbox":[1090,32,148,53]}
+{"kind":"shape","id":"sh/9s3yh83u","slide":7,"bbox":[120,350,1030,2]}
+{"kind":"shape","id":"sh/6lwzyx4n","slide":7,"bbox":[111,335,30,30]}
+{"kind":"textbox","id":"sh/7m5gr2l8","slide":7,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[42,224,75,35]}
+{"kind":"textbox","id":"sh/v2lkbet0","slide":7,"text":"Inventory","textPreview":"Inventory","textChars":9,"textLines":1,"bbox":[42,271,250,43]}
+{"kind":"textbox","id":"sh/a1c32tcf","slide":7,"text":"Export source URLs,\nduration, resolution,\nrights, publish state","textPreview":"Export source URLs, | duration, resolution, | rights, publish state","textChars":63,"textLines":3,"bbox":[42,398,250,100]}
+{"kind":"textbox","id":"sh/xon2dob6","slide":7,"text":"Gate: complete manifest","textPreview":"Gate: complete manifest","textChars":23,"textLines":1,"bbox":[42,526,250,32]}
+{"kind":"shape","id":"sh/wnel4jul","slide":7,"bbox":[411,335,30,30]}
+{"kind":"textbox","id":"sh/jq5kfytc","slide":7,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[342,224,75,35]}
+{"kind":"textbox","id":"sh/ipw36tcr","slide":7,"text":"Pilot 20–50","textPreview":"Pilot 20–50","textChars":11,"textLines":1,"bbox":[342,271,250,43]}
+{"kind":"textbox","id":"sh/5sn2h8b2","slide":7,"text":"Mix long / short,\n720p / 1080p,\nactive / archive","textPreview":"Mix long / short, | 720p / 1080p, | active / archive","textChars":48,"textLines":3,"bbox":[342,398,250,100]}
+{"kind":"textbox","id":"sh/krel83ux","slide":7,"text":"Gate: playback + cost","textPreview":"Gate: playback + cost","textChars":21,"textLines":1,"bbox":[342,526,250,32]}
+{"kind":"shape","id":"sh/7upk3it8","slide":7,"bbox":[711,335,30,30]}
+{"kind":"textbox","id":"sh/6tw3adcn","slide":7,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[642,224,75,35]}
+{"kind":"textbox","id":"sh/2p0n2hwv","slide":7,"text":"Batches 100–200","textPreview":"Batches 100–200","textChars":15,"textLines":1,"bbox":[642,271,250,43]}
+{"kind":"textbox","id":"sh/3q9ob2dg","slide":7,"text":"Controlled queue,\nretry + reconcile,\nspot-check metadata","textPreview":"Controlled queue, | retry + reconcile, | spot-check metadata","textChars":56,"textLines":3,"bbox":[642,398,250,100]}
+{"kind":"textbox","id":"sh/4ri547e1","slide":7,"text":"Gate: <1% unresolved","textPreview":"Gate: <1% unresolved","textChars":20,"textLines":1,"bbox":[642,526,250,32]}
+{"kind":"shape","id":"sh/pcr6dcvm","slide":7,"bbox":[1011,335,30,30]}
+{"kind":"textbox","id":"sh/ulgnyxwz","slide":7,"text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[942,224,75,35]}
+{"kind":"textbox","id":"sh/fm9472dk","slide":7,"text":"Scale the rest","textPreview":"Scale the rest","textChars":14,"textLines":1,"bbox":[942,271,250,43]}
+{"kind":"textbox","id":"sh/gni507e5","slide":7,"text":"Serve ready assets\nas each wave lands;\nretain rollback map","textPreview":"Serve ready assets | as each wave lands; | retain rollback map","textChars":58,"textLines":3,"bbox":[942,398,250,100]}
+{"kind":"textbox","id":"sh/hor69cva","slide":7,"text":"Gate: signed acceptance","textPreview":"Gate: signed acceptance","textChars":23,"textLines":1,"bbox":[942,526,250,32]}
+{"kind":"shape","id":"sh/ehkna1w3","slide":7,"bbox":[42,594,1196,42]}
+{"kind":"textbox","id":"sh/zitojmdo","slide":7,"text":"Proposed batch sizes are operating defaults—not vendor limits. Tune concurrency against observed API limits, encode time, and failure rate.","textPreview":"Proposed batch sizes are operating defaults—not vendor limits. Tune concurrency against observed API limits, encode time, and failure rate.","textChars":139,"textLines":1,"bbox":[62,605,1150,25]}
+{"kind":"textbox","id":"sh/9cvq90fq","slide":7,"text":"Sources in notes · rollout sizes are POWTV recommendations","textPreview":"Sources in notes · rollout sizes are POWTV recommendations","textChars":58,"textLines":1,"bbox":[42,660,850,20]}
+{"kind":"image","id":"im/psbu1k7q","slide":7,"name":"","alt":"POWtv logo","bbox":[1100,40,128,37]}
+{"kind":"notes","id":"nt/3yftq0","slide":7,"text":"[Sources]\n- Mux, “Migrate from self-managed video infrastructure,” recommends a small sample, batches, background jobs, controlled concurrency, retries, and webhook-driven readiness: https://www.mux.com/docs/guides/migrate-from-self-managed (accessed Jul 25, 2026).\n- Mux, “Make API requests,” rate-limit guidance: https://www.mux.com/docs/core/make-api-requests#api-rate-limits (accessed Jul 25, 2026).\n- Mux, “Listen for webhooks,” https://www.mux.com/docs/core/listen-for-webhooks (accessed Jul 25, 2026).\n- Pilot and batch sizes shown are proposed POWTV operating defaults, not Mux limits."}
+{"kind":"slide","id":"sl/mqs9do","slide":8,"title":"DECISION","textShapes":18}
+{"kind":"textbox","id":"sh/rmt4r25s","slide":8,"text":"DECISION","textPreview":"DECISION","textChars":8,"textLines":1,"bbox":[42,35,420,24]}
+{"kind":"textbox","id":"sh/cn2lk7mx","slide":8,"text":"Approve defaults; price the real inventory","textPreview":"Approve defaults; price the real inventory","textChars":42,"textLines":1,"bbox":[42,77,1030,82]}
+{"kind":"shape","id":"sh/dovmtcni","slide":8,"bbox":[42,159,88,6]}
+{"kind":"textbox","id":"sh/2xk3ed4v","slide":8,"text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1180,662,55,20]}
+{"kind":"shape","id":"sh/3ytkni5g","slide":8,"bbox":[1090,32,148,53]}
+{"kind":"textbox","id":"sh/pkb2psnm","slide":8,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[42,213,62,34]}
+{"kind":"textbox","id":"sh/mt43qh4f","slide":8,"text":"QUALITY","textPreview":"QUALITY","textChars":7,"textLines":1,"bbox":[125,215,130,25]}
+{"kind":"textbox","id":"sh/ned4zml0","slide":8,"text":"Plus 1080p by default","textPreview":"Plus 1080p by default","textChars":21,"textLines":1,"bbox":[285,211,430,38]}
+{"kind":"textbox","id":"sh/ny5cvul8","slide":8,"text":"Basic for archive; Premium by exception","textPreview":"Basic for archive; Premium by exception","textChars":39,"textLines":1,"bbox":[765,213,430,45]}
+{"kind":"shape","id":"sh/mxwbmp4n","slide":8,"bbox":[42,286,1153,1]}
+{"kind":"textbox","id":"sh/907ux43e","slide":8,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[42,325,62,34]}
+{"kind":"textbox","id":"sh/ozetozmt","slide":8,"text":"PILOT","textPreview":"PILOT","textChars":5,"textLines":1,"bbox":[125,327,130,25]}
+{"kind":"textbox","id":"sh/b2pczel4","slide":8,"text":"Authorize a 20–50 video sample","textPreview":"Authorize a 20–50 video sample","textChars":30,"textLines":1,"bbox":[285,323,430,38]}
+{"kind":"textbox","id":"sh/a1gbq94z","slide":8,"text":"Include varied duration, resolution, and demand","textPreview":"Include varied duration, resolution, and demand","textChars":47,"textLines":1,"bbox":[765,325,430,45]}
+{"kind":"shape","id":"sh/x47u1o3a","slide":8,"bbox":[42,398,1153,1]}
+{"kind":"textbox","id":"sh/w3ytsjmp","slide":8,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[42,437,62,34]}
+{"kind":"textbox","id":"sh/j6pc3elg","slide":8,"text":"CONTROL","textPreview":"CONTROL","textChars":7,"textLines":1,"bbox":[125,439,130,25]}
+{"kind":"textbox","id":"sh/y5gbu94v","slide":8,"text":"Set a monthly cost threshold","textPreview":"Set a monthly cost threshold","textChars":28,"textLines":1,"bbox":[285,435,430,38]}
+{"kind":"textbox","id":"sh/u1kf2do3","slide":8,"text":"Pause the next batch if the threshold is exceeded","textPreview":"Pause the next batch if the threshold is exceeded","textChars":49,"textLines":1,"bbox":[765,437,430,45]}
+{"kind":"shape","id":"sh/vmtwvi5o","slide":8,"bbox":[42,558,1196,74]}
+{"kind":"textbox","id":"sh/gn2x4n69","slide":8,"text":"FIRST ACTION","textPreview":"FIRST ACTION","textChars":12,"textLines":1,"bbox":[68,581,135,24]}
+{"kind":"textbox","id":"sh/hobexsnu","slide":8,"text":"Export the inventory manifest; rerun the model with actual duration, resolution, and expected viewing.","textPreview":"Export the inventory manifest; rerun the model with actual duration, resolution, and expected viewing.","textChars":102,"textLines":1,"bbox":[225,577,965,36]}
+{"kind":"textbox","id":"sh/6x0vydo7","slide":8,"text":"Sources in notes · decision basis","textPreview":"Sources in notes · decision basis","textChars":33,"textLines":1,"bbox":[42,660,850,20]}
+{"kind":"image","id":"im/p0r214zq","slide":8,"name":"","alt":"POWtv logo","bbox":[1100,40,128,37]}
+{"kind":"notes","id":"nt/mqs9do","slide":8,"text":"[Sources]\n- Mux, “Understanding Mux Pricing,” public rate structure and cost levers, https://www.mux.com/docs/pricing/overview (accessed Jul 25, 2026).\n- Decision defaults and next action are recommendations for POWTV."}

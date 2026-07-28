@@ -4,12 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-import {
-  useFonts,
-  Sora_400Regular,
-  Sora_600SemiBold,
-  Sora_700Bold,
-} from "@expo-google-fonts/sora";
+
 import { supabase } from "@/utils/supabase";
 import { useSession } from "@/context/auth";
 
@@ -33,13 +28,6 @@ export default function Reset() {
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [error, setError] = useState("");
-  const [fontsLoaded] = useFonts({
-    Sora_400Regular,
-    Sora_600SemiBold,
-    Sora_700Bold,
-  });
-
-  if (!fontsLoaded) return null;
 
   async function handlePasswordUpdate() {
     if (!newPassword) {

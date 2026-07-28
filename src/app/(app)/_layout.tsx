@@ -2,7 +2,6 @@ import { Tabs } from "expo-router";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Image } from "expo-image";
-import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Home from "@/components/icons/Home";
 import Search from "@/components/icons/Search";
@@ -35,7 +34,7 @@ export default function AppTabs() {
           backgroundColor: "#18181B",
           borderTopWidth: 0,
         },
-        // headerStyle: { backgroundColor: "#18181B" },
+        sceneStyle: { backgroundColor: "#000" },
         headerShown: false,
         headerTintColor: "#FFFFFF",
       }}
@@ -57,12 +56,6 @@ export default function AppTabs() {
             ),
           title: "Home",
 
-          sceneStyle: {
-            backgroundColor: "#000",
-              },
-
-
-
           // tabBarStyle: { display: "none" },
           tabBarIcon: ({ color, size }) => (
             <Home width={size} height={size} color={color} />
@@ -81,7 +74,7 @@ export default function AppTabs() {
       <Tabs.Screen
         name="watch"
         options={{
-          title: "Watch",
+          title: "Shorts",
           tabBarIcon: ({ color, size }) => (
             <Watch width={size} height={size} color={color} />
           ),
@@ -100,9 +93,6 @@ export default function AppTabs() {
         name="profile"
         options={{
           title: "Profile",
-          sceneStyle: {
-            backgroundColor: "#000",
-          },
           tabBarIcon: ({ size }) => <Profile width={size} height={size} />,
         }}
       />
