@@ -3,7 +3,6 @@ import { useSession } from "@/context/auth";
 import {
   Text,
   View,
-  ImageBackground,
   StyleSheet,
   TextInput,
   Image,
@@ -11,15 +10,11 @@ import {
   Pressable,
   Alert,
 } from "react-native";
+import { ImageBackground, useImage } from "expo-image";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import {
-  useFonts,
-  Sora_400Regular,
-  Sora_600SemiBold,
-  Sora_700Bold,
-} from "@expo-google-fonts/sora";
 
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 const image = require("../../../assets/images/sign-in.jpg");
 const logo = require("../../../assets/images/pow-tv-fulllogo.png");
@@ -30,6 +25,9 @@ const INPUT_BG = "rgba(255,255,255,0.08)";
 const INPUT_BORDER = "rgba(255,255,255,0.18)";
 
 export default function SignInScreen() {
+  // useImage preloads + decodes the asset once; ImageBackground gets the
+  // ready native ref instead of decoding on first paint.
+  const bg = useImage(image);
   const { signUp } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -37,15 +35,9 @@ export default function SignInScreen() {
   const [fullname, setFullname] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
-  const [fontsLoaded] = useFonts({
-    Sora_400Regular,
-    Sora_600SemiBold,
-    Sora_700Bold,
-  });
 
   type Status = "idle" | "submitting" | "error";
 
-  if (!fontsLoaded) return null;
   async function handleSignUp(
     firstname: string,
     email: string,
@@ -67,8 +59,9 @@ export default function SignInScreen() {
   }
 
   return (
-    <View style={s.container}>
-      <ImageBackground source={image} resizeMode="cover" style={s.bg}>
+
+    <SafeAreaView style={s.container}>
+      <ImageBackground source={bg} contentFit="cover" style={s.bg}>
         {/* Logo */}
         <View style={s.logoWrap}>
           <Image source={logo} style={s.logo} resizeMode="contain" />
@@ -197,7 +190,7 @@ export default function SignInScreen() {
           </Pressable>
         </View>
       </ImageBackground>
-    </View>
+    </SafeAreaView>
   );
 }
 
