@@ -42,7 +42,9 @@ export type Database = {
       assets: {
         Row: {
           aspect_ratio: string | null
+          category: string
           created_at: string | null
+          creator_id: string | null
           duration_seconds: number | null
           errors: Json | null
           id: string
@@ -73,7 +75,9 @@ export type Database = {
         }
         Insert: {
           aspect_ratio?: string | null
+          category?: string
           created_at?: string | null
+          creator_id?: string | null
           duration_seconds?: number | null
           errors?: Json | null
           id: string
@@ -104,7 +108,9 @@ export type Database = {
         }
         Update: {
           aspect_ratio?: string | null
+          category?: string
           created_at?: string | null
+          creator_id?: string | null
           duration_seconds?: number | null
           errors?: Json | null
           id?: string
@@ -133,7 +139,15 @@ export type Database = {
           upload_id?: string | null
           video_quality?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "assets_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       live_streams: {
         Row: {
@@ -210,6 +224,63 @@ export type Database = {
         }
         Relationships: []
       }
+      playlist_items: {
+        Row: {
+          asset_id: string
+          playlist_id: string
+          position: number
+        }
+        Insert: {
+          asset_id: string
+          playlist_id: string
+          position: number
+        }
+        Update: {
+          asset_id?: string
+          playlist_id?: string
+          position?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "playlist_items_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "playlist_items_playlist_id_fkey"
+            columns: ["playlist_id"]
+            isOneToOne: false
+            referencedRelation: "playlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      playlists: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          is_series: boolean
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_series?: boolean
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_series?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
       uploads: {
         Row: {
           asset_id: string | null
@@ -278,7 +349,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      creators: {
+        Row: {
+          avatar_url: string | null
+          description: string | null
+          id: string | null
+          is_guest: boolean | null
+          name: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          description?: string | null
+          id?: string | null
+          is_guest?: boolean | null
+          name?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          description?: string | null
+          id?: string | null
+          is_guest?: boolean | null
+          name?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
@@ -334,6 +428,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      creators: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_guest: boolean
+          name: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_guest?: boolean
+          name: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_guest?: boolean
+          name?: string
+        }
+        Relationships: []
+      }
+      saved_videos: {
+        Row: {
+          asset_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          asset_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          asset_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           address: string | null
@@ -358,71 +497,6 @@ export type Database = {
           id?: string
           received_welcome_email?: boolean | null
           username?: string | null
-        }
-        Relationships: []
-      }
-      video_metadata: {
-        Row: {
-          category: string | null
-          created_at: string
-          description: string | null
-          id: string
-          mux_asset_id: string | null
-          mux_playback_id: string | null
-          mux_upload_id: string | null
-          status: string | null
-          thumbnail_url: string | null
-          title: string | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          mux_asset_id?: string | null
-          mux_playback_id?: string | null
-          mux_upload_id?: string | null
-          status?: string | null
-          thumbnail_url?: string | null
-          title?: string | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string
-          description?: string | null
-          id?: string
-          mux_asset_id?: string | null
-          mux_playback_id?: string | null
-          mux_upload_id?: string | null
-          status?: string | null
-          thumbnail_url?: string | null
-          title?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "video_metadata_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "video_thumbnails"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      video_thumbnails: {
-        Row: {
-          created_at: string
-          id: string
-          url: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          url?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          url?: string | null
         }
         Relationships: []
       }

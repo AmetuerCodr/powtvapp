@@ -5,11 +5,9 @@ import { Slider } from "@miblanchard/react-native-slider";
 
 // POWTV brand gold — matches the play button + progress track.
 const GOLD = "#F5A100";
-// Slightly see-through gold so the buttons sit over the video without
-// blocking it — keeps the controls feeling light / less invasive.
-const GOLD_TRANSLUCENT = "rgba(245, 161, 0, 0.85)";
-
 interface VideoContrls {
+  captionsEnabled?: boolean;
+  onToggleCaptions?: () => void;
   onTogglePlayPause: () => void;
   onTogglePlaybackSpeed: () => void;
   onSeek: (seconds: number) => void;
@@ -22,6 +20,8 @@ interface VideoContrls {
 }
 
 const VideoControls = ({
+  captionsEnabled = false,
+  onToggleCaptions,
   onTogglePlayPause,
   onTogglePlaybackSpeed,
   onSeek,
@@ -88,6 +88,23 @@ const VideoControls = ({
           >
             <Text style={styles.speedText}>{`${rate}x`}</Text>
           </TouchableOpacity>
+
+          {onToggleCaptions ? (
+            <TouchableOpacity
+              accessibilityLabel={`Turn captions ${captionsEnabled ? "off" : "on"}`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: captionsEnabled }}
+              onPress={onToggleCaptions}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              style={styles.smallButton}
+            >
+              <MaterialIcons
+                name="closed-caption"
+                size={22}
+                color={captionsEnabled ? GOLD : "#FFFFFF"}
+              />
+            </TouchableOpacity>
+          ) : null}
 
           {/* Fullscreen */}
           <TouchableOpacity

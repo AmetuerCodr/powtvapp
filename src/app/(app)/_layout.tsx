@@ -65,7 +65,13 @@ export default function AppTabs() {
       <Tabs.Screen
         name="search"
         options={{
-          title: "Search",
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="explore"
+        options={{
+          title: "Explore",
           tabBarIcon: ({ color, size }) => (
             <Search width={size} height={size} color={color} />
           ),
@@ -97,8 +103,26 @@ export default function AppTabs() {
         }}
       />
       
-        <Tabs.Screen name="explore" options={{ href: null }} />
+        <Tabs.Screen
+          name="category"
+          options={{
+            href: null,
+            headerShown: true,
+            headerStyle: { backgroundColor: "#000" },
+            title: "Browse",
+          }}
+        />
+        <Tabs.Screen
+          name="guest-creators"
+          options={{
+            href: null,
+            headerShown: true,
+            headerStyle: { backgroundColor: "#000" },
+            title: "Guest Creators",
+          }}
+        />
         <Tabs.Screen name="video" options={{ href: null, headerShown: false, }} />
+        <Tabs.Screen name="playlist" options={{ href: null, headerShown: false }} />
       </Tabs>
       </QueryClientProvider>
      </GestureHandlerRootView>

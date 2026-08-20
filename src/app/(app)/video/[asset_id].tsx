@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEvent } from "expo";
 import {
   useFocusEffect,
@@ -10,6 +10,7 @@ import * as ScreenOrientation from "expo-screen-orientation";
 import { useVideoPlayer, VideoView } from "expo-video";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,23 +25,21 @@ import {
 import { runOnJS } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CreatorAvatar from "@/components/creator-avatar";
 import VideoControls from "@/components/VideoControls";
 import VideoFeed from "@/components/video-feed";
-import { MuxAssetData } from "@/utils/interfaces";
-import { supabase } from "@/utils/supabase";
+import { useSession } from "@/context/auth";
+import { useDelayedLoading } from "@/hooks/use-delayed-loading";
+import { getVideoAsset } from "@/utils/getVideoAssets";
+import {
+  isVideoSaved,
+  savedVideoKey,
+  savedVideosKey,
+  setVideoSaved,
+} from "@/utils/savedVideos";
 
-// POWTV brand accents
-const GOLD = "#F5A100";
 const playbackSpeedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-// Mockup metadata — swap for real Supabase video record fields later.
-const videoMeta = {
-  title: "The Amazing Spider-Man",
-  channel: "@SonyPictures",
-  postedAgo: "14 years ago",
-  likes: "39K",
-  views: "2M",
-};
 // Pure-JS relative time — no Intl.RelativeTimeFormat (missing on Hermes/Android).
 function getRelativeTime(isoString: string): string {
   const deltaSeconds = Math.round(
@@ -67,23 +66,79 @@ function getRelativeTime(isoString: string): string {
   return deltaSeconds >= 0 ? `${label} ago` : `in ${label}`;
 }
 
+function VideoDetailSkeleton({
+  isLandscape,
+  onBack,
+  visible,
+}: {
+  isLandscape: boolean;
+  onBack: () => void;
+  visible: boolean;
+}) {
+  const blockStyle = visible ? styles.skeletonBlock : undefined;
+
+  return (
+    <View style={isLandscape && styles.skeletonScreenLandscape}>
+      <View
+        style={
+          isLandscape
+            ? styles.videoContainerLandscape
+            : styles.videoContainerPortrait
+        }
+      >
+        <View
+          accessibilityLabel={visible ? "Loading video" : undefined}
+          accessibilityRole={visible ? "progressbar" : undefined}
+          style={[styles.video, blockStyle]}
+        />
+        {visible ? (
+          <TouchableOpacity
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+            style={styles.backButton}
+            onPress={onBack}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
+          </TouchableOpacity>
+        ) : null}
+      </View>
+
+      {!isLandscape ? (
+        <View style={styles.skeletonMetaSection}>
+          <View style={[blockStyle, styles.skeletonTitle]} />
+          <View style={[blockStyle, styles.skeletonMeta]} />
+          <View style={styles.skeletonCreatorRow}>
+            <View style={[blockStyle, styles.skeletonAvatar]} />
+            <View style={styles.skeletonCreatorText}>
+              <View style={[blockStyle, styles.skeletonCreatorName]} />
+              <View
+                style={[blockStyle, styles.skeletonCreatorDescription]}
+              />
+            </View>
+          </View>
+          <View style={styles.skeletonActionRow}>
+            <View style={[blockStyle, styles.skeletonSave]} />
+          </View>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
 export default function WatchScreen() {
   const params = useLocalSearchParams<{ asset_id: string }>();
+  const { session } = useSession();
+  const userId = session?.user.id ?? "";
+  const queryClient = useQueryClient();
 
   // Fetch this asset's Mux row. react-query is already provided in (app)/_layout.
   const { data: video, isLoading, error } = useQuery({
     queryKey: ["mux-asset", params.asset_id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .schema("mux")
-        .from("assets")
-        .select("*")
-        .eq("id", params.asset_id)
-        .single();
-      if (error) throw error;
-      return data as unknown as MuxAssetData; // ponytail: cast Json cols; tighten if meta/playback_ids shape drifts
-    },
+    queryFn: () => getVideoAsset(params.asset_id),
   });
+  const showSkeleton = useDelayedLoading(isLoading);
+  const holdSkeleton = isLoading || showSkeleton;
 
   // Mux is done only when status === "ready"; until then there's no playable stream.
   const isReady = video?.status === "ready";
@@ -103,10 +158,31 @@ export default function WatchScreen() {
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Mockup social state
-  const [liked, setLiked] = useState(false);
-  const [followed, setFollowed] = useState(false);
   const isFocusedRef = useRef(false);
+
+  const {
+    data: isSaved,
+    isError: isSavedError,
+    isFetching: isSavedFetching,
+    refetch: refetchSaved,
+  } = useQuery({
+    queryKey: savedVideoKey(userId, params.asset_id),
+    queryFn: () => isVideoSaved(userId, params.asset_id),
+    enabled: Boolean(userId && params.asset_id),
+  });
+  const saveMutation = useMutation({
+    mutationFn: (saved: boolean) =>
+      setVideoSaved(userId, params.asset_id, saved),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(
+        savedVideoKey(userId, params.asset_id),
+        saved,
+      );
+      void queryClient.invalidateQueries({ queryKey: savedVideosKey(userId) });
+    },
+    onError: () =>
+      Alert.alert("Save failed", "Please check your connection and try again."),
+  });
 
   // Source arrives async (after the query resolves), so create the player empty
   // and load the stream in the effect below — single load path, no double-fetch.
@@ -114,9 +190,21 @@ export default function WatchScreen() {
     player.timeUpdateEventInterval = 0.5;
   });
 
+  const sourceLoad = useEvent(player, "sourceLoad", {
+    videoSource: null,
+    duration: 0,
+    availableVideoTracks: [],
+    availableSubtitleTracks: [],
+    availableAudioTracks: [],
+  });
+  const { subtitleTrack } = useEvent(player, "subtitleTrackChange", {
+    subtitleTrack: player.subtitleTrack,
+  });
+
   useEffect(() => {
     let active = true;
     player.pause();
+    player.subtitleTrack = null;
     if (!videoSource) return;
 
     player
@@ -131,6 +219,10 @@ export default function WatchScreen() {
       player.pause();
     };
   }, [videoSource, player]);
+
+  useEffect(() => {
+    if (sourceLoad.videoSource) player.subtitleTrack = null;
+  }, [player, sourceLoad.videoSource]);
 
   const timeUpdate = useEvent(player, "timeUpdate");
   const currentTime = timeUpdate?.currentTime ?? 0; // seconds
@@ -175,6 +267,12 @@ export default function WatchScreen() {
     setPlaybackSpeed(playbackSpeedOptions[index]);
   };
 
+  const toggleCaptions = () => {
+    player.subtitleTrack = subtitleTrack
+      ? null
+      : (sourceLoad.availableSubtitleTracks[0] ?? null);
+  };
+
   const toggleFullscreen = async () => {
     if (!isFullscreen) {
       await ScreenOrientation.lockAsync(
@@ -211,6 +309,11 @@ export default function WatchScreen() {
     });
 
   const router = useRouter();
+  const goBack = () => {
+    player.pause();
+    if (router.canGoBack()) router.back();
+    else router.replace("/(app)");
+  };
   const singleTap = Gesture.Tap().onStart(() => runOnJS(toggleControls)());
 
   const videoPlayer = (
@@ -235,8 +338,14 @@ export default function WatchScreen() {
           {showControls && (
             <>
               <VideoControls
+                captionsEnabled={Boolean(subtitleTrack)}
                 onTogglePlayPause={togglePlayPause}
                 onTogglePlaybackSpeed={togglePlaybackSpeed}
+                onToggleCaptions={
+                  sourceLoad.availableSubtitleTracks.length
+                    ? toggleCaptions
+                    : undefined
+                }
                 onSeek={onSeek}
                 onToggleFullscreen={toggleFullscreen}
                 duration={
@@ -248,11 +357,10 @@ export default function WatchScreen() {
                 fullScreenValue={isFullscreen}
               />
               <TouchableOpacity
+                accessibilityLabel="Go back"
+                accessibilityRole="button"
                 style={styles.backButton}
-                onPress={() => {
-                  player.pause();
-                  router.replace("/(app)");
-                }}
+                onPress={goBack}
                 hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               >
                 <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
@@ -265,13 +373,13 @@ export default function WatchScreen() {
           <Text style={styles.statusText}>
             {error
               ? "Couldn't load this video."
-              : isLoading
-                ? "Loading…"
-                : "This video is still being prepared. Check back in a moment."}
+              : "This video is still being prepared. Check back in a moment."}
           </Text>
           <TouchableOpacity
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
             style={styles.backButton}
-            onPress={() => router.replace("/(app)")}
+            onPress={goBack}
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
             <Ionicons name="arrow-back" size={28} color="#FFFFFF" />
@@ -289,68 +397,84 @@ export default function WatchScreen() {
           {video?.meta?.title || "Untitled video"}
         </Text>
 
-        <Text style={styles.metaLine} numberOfLines={1}>
-          <Text style={styles.metaHandle}>{videoMeta.channel}</Text>
-          {`  ${videoMeta.likes} likes  ${videoMeta.views} views  `}
-          {video?.created_at ? getRelativeTime(video.created_at) : ""}
-          <Text style={styles.metaMore}>  ...more</Text>
-        </Text>
+        {video?.created_at ? (
+          <Text style={styles.metaLine}>
+            {getRelativeTime(video.created_at)}
+          </Text>
+        ) : null}
+
+        <View style={styles.creatorRow}>
+          <CreatorAvatar
+            creator={video?.creator}
+            size={40}
+            style={styles.avatar}
+          />
+          <View style={styles.creatorText}>
+            <Text numberOfLines={1} style={styles.creatorName}>
+              {video?.creator?.name || "Creator"}
+            </Text>
+            {video?.creator?.description ? (
+              <Text numberOfLines={3} style={styles.creatorDescription}>
+                {video.creator.description}
+              </Text>
+            ) : null}
+          </View>
+        </View>
 
         <View style={styles.actionRow}>
-          <View style={styles.leftCluster}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>
-                {videoMeta.channel.replace("@", "").charAt(0)}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={styles.joinBtn}
-              onPress={() => setFollowed((value) => !value)}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.joinText}>
-                {followed ? "Joined" : "Join"}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bellBtn} activeOpacity={0.8}>
-              <Ionicons name="notifications-outline" size={16} color="#fff" />
-              <Ionicons
-                name="chevron-down"
-                size={13}
-                color="#fff"
-                style={styles.bellChevron}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.rightCluster}>
-            <TouchableOpacity
-              style={styles.iconBtn}
-              onPress={() => setLiked((value) => !value)}
-              activeOpacity={0.7}
-            >
-              <Ionicons
-                name={liked ? "thumbs-up" : "thumbs-up-outline"}
-                size={22}
-                color="#fff"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
-              <Ionicons name="thumbs-down-outline" size={22} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
-              <Ionicons name="arrow-redo-outline" size={22} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
-              <Ionicons name="sparkles-outline" size={22} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconBtn} activeOpacity={0.7}>
-              <Ionicons name="ellipsis-horizontal" size={22} color="#fff" />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            accessibilityLabel={
+              isSavedError
+                ? "Retry loading saved status"
+                : isSaved
+                  ? "Remove from Library"
+                  : "Save to Library"
+            }
+            accessibilityRole="button"
+            accessibilityState={{
+              busy: isSavedFetching || saveMutation.isPending,
+              disabled: isSavedFetching || saveMutation.isPending,
+              selected: Boolean(isSaved),
+            }}
+            activeOpacity={0.7}
+            disabled={isSavedFetching || saveMutation.isPending}
+            onPress={() => {
+              if (isSavedError) void refetchSaved();
+              else saveMutation.mutate(!isSaved);
+            }}
+            style={[styles.saveButton, isSaved && styles.saveButtonActive]}
+          >
+            <Ionicons
+              name={
+                isSavedError
+                  ? "refresh-outline"
+                  : isSaved
+                    ? "bookmark"
+                    : "bookmark-outline"
+              }
+              size={18}
+              color={isSaved ? "#000" : "#fff"}
+            />
+            <Text style={[styles.saveText, isSaved && styles.saveTextActive]}>
+              {isSavedError
+                ? "Retry"
+                : saveMutation.isPending
+                  ? "Saving…"
+                  : isSaved
+                    ? "Saved"
+                    : "Save"}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </>
+  );
+  const videoDetailSkeleton = (
+    <VideoDetailSkeleton
+      isLandscape={isLandscape}
+      onBack={goBack}
+      visible={showSkeleton}
+    />
   );
 
   return (
@@ -365,11 +489,11 @@ export default function WatchScreen() {
       }}
     >
       {isLandscape ? (
-        videoPlayer
+        holdSkeleton ? videoDetailSkeleton : videoPlayer
       ) : (
         <VideoFeed
           key={params.asset_id}
-          header={portraitHeader}
+          header={holdSkeleton ? videoDetailSkeleton : portraitHeader}
           title="More videos"
           excludeAssetId={params.asset_id}
           pageSize={8}
@@ -396,6 +520,63 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  skeletonScreenLandscape: {
+    flex: 1,
+  },
+  skeletonBlock: {
+    backgroundColor: "#27272a",
+  },
+  skeletonMetaSection: {
+    paddingHorizontal: 12,
+    paddingTop: 12,
+  },
+  skeletonTitle: {
+    width: "78%",
+    height: 20,
+    borderRadius: 4,
+  },
+  skeletonMeta: {
+    width: "32%",
+    height: 12,
+    borderRadius: 4,
+    marginTop: 10,
+  },
+  skeletonCreatorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 14,
+  },
+  skeletonAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  skeletonCreatorText: {
+    flex: 1,
+    gap: 7,
+    marginLeft: 10,
+  },
+  skeletonCreatorName: {
+    width: "38%",
+    height: 14,
+    borderRadius: 4,
+  },
+  skeletonCreatorDescription: {
+    width: "68%",
+    height: 12,
+    borderRadius: 4,
+  },
+  skeletonActionRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    gap: 10,
+    marginTop: 14,
+  },
+  skeletonSave: {
+    width: 88,
+    height: 44,
+    borderRadius: 22,
+  },
 
   // Shown while Mux is still processing, or on load/error — fills the video box.
   statusOverlay: {
@@ -418,7 +599,10 @@ const styles = StyleSheet.create({
     top: 8,
     left: 12,
     zIndex: 10,
-    padding: 4,
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "transparent",
   },
 
@@ -438,67 +622,54 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 6,
   },
-  metaHandle: {
-    color: "#aaaaaa",
-    fontWeight: "600",
+  creatorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 14,
   },
-  metaMore: {
+  avatar: {
+    marginRight: 10,
+  },
+  creatorText: {
+    flex: 1,
+  },
+  creatorName: {
     color: "#f1f1f1",
-    fontWeight: "600",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  creatorDescription: {
+    color: "#aaaaaa",
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 2,
   },
   actionRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     marginTop: 14,
   },
-  leftCluster: {
+  saveButton: {
+    minHeight: 44,
     flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: GOLD,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 8,
+    gap: 7,
+    borderWidth: 1,
+    borderColor: "#3f3f46",
+    borderRadius: 22,
+    paddingHorizontal: 16,
   },
-  avatarText: {
+  saveButtonActive: {
+    borderColor: "#f5a100",
+    backgroundColor: "#f5a100",
+  },
+  saveText: {
+    color: "#fff",
+    fontFamily: "Sora_600SemiBold",
+    fontSize: 13,
+  },
+  saveTextActive: {
     color: "#000",
-    fontSize: 14,
-    fontWeight: "800",
-  },
-  joinBtn: {
-    backgroundColor: "#f1f1f1",
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 18,
-  },
-  joinText: {
-    color: "#0f0f0f",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  bellBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 18,
-    marginLeft: 8,
-  },
-  bellChevron: {
-    marginLeft: 2,
-  },
-  rightCluster: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconBtn: {
-    paddingHorizontal: 3,
-    marginLeft: 7,
   },
 });

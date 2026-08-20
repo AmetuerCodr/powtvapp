@@ -9,14 +9,17 @@ import {
   View,
 } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import CreatorAvatar from "@/components/creator-avatar";
+import { useDelayedLoading } from "@/hooks/use-delayed-loading";
 import { clearDevCache } from "@/utils/devCache";
 import { getVideoAssets } from "@/utils/getVideoAssets";
 import { MuxAssetData } from "@/utils/interfaces";
+import { type VideoCategory } from "@/utils/search";
 import {
   getPublicPlaybackId,
   getVideoFeedItems,
@@ -31,9 +34,14 @@ const COLORS = {
   textMuted: "#a1a1aa",
 };
 
+const SKELETON_CARD_KEYS = [0, 1, 2] as const;
+
 interface VideoFeedProps {
+  category?: VideoCategory;
   emptyMessage?: string;
   excludeAssetId?: string;
+  guestOnly?: boolean;
+  groupShorts?: boolean;
   header?: ReactNode;
   pageSize?: number;
   title?: string;
@@ -99,7 +107,7 @@ function ShortsShelfCard({ item }: { item: MuxAssetData }) {
           <View style={styles.shortThumbWrap}>
             <Image
               cachePolicy="memory-disk"
-              contentFit="contain"
+              contentFit="cover"
               recyclingKey={item.id}
               source={
                 thumbnailUrl
@@ -147,11 +155,35 @@ function ShortsShelf({ videos }: { videos: MuxAssetData[] }) {
   );
 }
 
-function VideoCard({ item }: { item: MuxAssetData }) {
+function VideoFeedSkeleton() {
+  return (
+    <View
+      accessibilityLabel="Loading videos"
+      accessibilityRole="progressbar"
+    >
+      {SKELETON_CARD_KEYS.map((key) => (
+        <View key={key} style={styles.card}>
+          <View style={[styles.thumbWrap, styles.skeletonBlock]} />
+          <View style={styles.infoRow}>
+            <View style={[styles.avatar, styles.skeletonAvatar]} />
+            <View style={styles.skeletonText}>
+              <View style={[styles.skeletonBlock, styles.skeletonTitle]} />
+              <View style={[styles.skeletonBlock, styles.skeletonMeta]} />
+            </View>
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+export function VideoCard({ item }: { item: MuxAssetData }) {
+  const queryClient = useQueryClient();
   const title = item.meta?.title || "Untitled video";
   const thumbnailUrl = getThumbnailUrl(item);
   const duration = formatDuration(item.duration_seconds);
   const publishedDate = formatPublishedDate(item.created_at);
+  const creatorName = item.creator?.name || "Creator";
 
   return (
     <Link
@@ -164,6 +196,9 @@ function VideoCard({ item }: { item: MuxAssetData }) {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`Play ${title}`}
+        onPressIn={() =>
+          queryClient.setQueryData(["mux-asset", item.id], item)
+        }
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
         <View style={styles.thumbWrap}>
@@ -176,7 +211,7 @@ function VideoCard({ item }: { item: MuxAssetData }) {
             style={styles.thumb}
             cachePolicy="memory-disk"
             recyclingKey={item.id}
-            contentFit="contain"
+            contentFit="cover"
           />
           {duration ? (
             <View style={styles.durationPill}>
@@ -186,15 +221,15 @@ function VideoCard({ item }: { item: MuxAssetData }) {
         </View>
 
         <View style={styles.infoRow}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>P</Text>
-          </View>
+          <CreatorAvatar creator={item.creator} style={styles.avatar} />
           <View style={styles.infoText}>
             <Text style={styles.videoTitle} numberOfLines={2}>
               {title}
             </Text>
             <Text style={styles.metaLine} numberOfLines={1}>
-              {publishedDate ? `POW TV • ${publishedDate}` : "POW TV"}
+              {publishedDate
+                ? `${creatorName} • ${publishedDate}`
+                : creatorName}
             </Text>
           </View>
         </View>
@@ -204,8 +239,11 @@ function VideoCard({ item }: { item: MuxAssetData }) {
 }
 
 export default function VideoFeed({
+  category,
   emptyMessage = "No videos available.",
   excludeAssetId,
+  guestOnly = false,
+  groupShorts = true,
   header,
   pageSize = 15,
   title,
@@ -221,12 +259,22 @@ export default function VideoFeed({
     isRefetching,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ["video-feed", pageSize, excludeAssetId ?? null],
+    queryKey: [
+      "video-feed",
+      pageSize,
+      excludeAssetId ?? null,
+      guestOnly,
+      category ?? null,
+    ],
     initialPageParam: 1,
     queryFn: async ({ pageParam }): Promise<Page> => {
       try {
         return {
-          videos: await getVideoAssets(pageParam, pageSize, excludeAssetId),
+          videos: await getVideoAssets(pageParam, pageSize, {
+            category,
+            excludeAssetId,
+            guestOnly,
+          }),
           nextPage: pageParam + 1,
         };
       } catch (fetchError) {
@@ -237,6 +285,7 @@ export default function VideoFeed({
     getNextPageParam: (lastPage) =>
       lastPage.videos.length === pageSize ? lastPage.nextPage : undefined,
   });
+  const showSkeleton = useDelayedLoading(isLoading);
 
   const videos = useMemo(() => {
     const uniqueVideos = new Map<string, MuxAssetData>();
@@ -245,18 +294,23 @@ export default function VideoFeed({
     }
     return [...uniqueVideos.values()];
   }, [data]);
-  const feedItems = useMemo(() => getVideoFeedItems(videos), [videos]);
+  const feedItems = useMemo<FeedItem[]>(
+    () =>
+      groupShorts
+        ? getVideoFeedItems(videos)
+        : videos.map((video) => ({
+            key: `video:${video.id}`,
+            type: "video",
+            video,
+          })),
+    [groupShorts, videos],
+  );
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchNextPageError && !isFetchingNextPage) {
       void fetchNextPage();
     }
-  }, [
-    fetchNextPage,
-    hasNextPage,
-    isFetchNextPageError,
-    isFetchingNextPage,
-  ]);
+  }, [fetchNextPage, hasNextPage, isFetchNextPageError, isFetchingNextPage]);
 
   const handleRefresh = useCallback(async () => {
     await clearDevCache();
@@ -266,7 +320,7 @@ export default function VideoFeed({
   return (
     <SafeAreaView style={styles.root} edges={[]}>
       <FlashList
-        data={feedItems}
+        data={showSkeleton ? [] : feedItems}
         getItemType={(item) => item.type}
         keyExtractor={(item) => item.key}
         contentContainerStyle={styles.listContent}
@@ -296,17 +350,19 @@ export default function VideoFeed({
           ) : null
         }
         ListEmptyComponent={
-          <View style={styles.stateContainer}>
-            {isLoading ? (
-              <ActivityIndicator color={COLORS.amber500} />
-            ) : (
+          showSkeleton ? (
+            <VideoFeedSkeleton />
+          ) : isLoading ? (
+            null
+          ) : (
+            <View style={styles.stateContainer}>
               <Text style={styles.stateText}>
                 {isError
                   ? "Couldn't load videos. Pull to refresh."
                   : emptyMessage}
               </Text>
-            )}
-          </View>
+            </View>
+          )
         }
         ListFooterComponent={
           isFetchNextPageError ? (
@@ -358,6 +414,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textMuted,
     textAlign: "center",
+  },
+  skeletonBlock: {
+    backgroundColor: COLORS.bgElevated,
+  },
+  skeletonAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  skeletonText: {
+    flex: 1,
+    gap: 8,
+    paddingTop: 2,
+  },
+  skeletonTitle: {
+    width: "90%",
+    height: 16,
+    borderRadius: 4,
+  },
+  skeletonMeta: {
+    width: "55%",
+    height: 12,
+    borderRadius: 4,
   },
   footer: {
     marginVertical: 12,
@@ -451,18 +530,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: COLORS.amber500,
-    alignItems: "center",
-    justifyContent: "center",
     marginRight: 12,
-  },
-  avatarText: {
-    fontFamily: "Sora_700Bold",
-    fontSize: 16,
-    color: COLORS.bgBase,
   },
   infoText: {
     flex: 1,

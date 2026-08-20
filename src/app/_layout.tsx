@@ -51,7 +51,7 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <SessionProvider>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <RootNavigator />
     </SessionProvider>
   );

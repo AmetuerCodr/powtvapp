@@ -5,7 +5,12 @@ import {
   type FlashListProps,
   type ListRenderItemInfo,
 } from "@shopify/flash-list";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -30,8 +35,16 @@ import {
 } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import CreatorAvatar from "@/components/creator-avatar";
+import { useSession } from "@/context/auth";
 import { getVideoAssets } from "@/utils/getVideoAssets";
 import type { MuxAssetData } from "@/utils/interfaces";
+import {
+  isVideoSaved,
+  savedVideoKey,
+  savedVideosKey,
+  setVideoSaved,
+} from "@/utils/savedVideos";
 import {
   getPlayableShorts,
   type PlayableShort,
@@ -85,6 +98,106 @@ function ShortAction({
   );
 }
 
+function ShortSaveAction({ assetId }: { assetId: string }) {
+  const { session } = useSession();
+  const userId = session?.user.id ?? "";
+  const queryClient = useQueryClient();
+  const {
+    data: isSaved,
+    isError: isSavedError,
+    isFetching: isSavedFetching,
+    refetch: refetchSaved,
+  } = useQuery({
+    queryKey: savedVideoKey(userId, assetId),
+    queryFn: () => isVideoSaved(userId, assetId),
+    enabled: Boolean(userId && assetId),
+  });
+  const saveMutation = useMutation({
+    mutationFn: ({
+      userId,
+      assetId,
+      saved,
+    }: {
+      userId: string;
+      assetId: string;
+      saved: boolean;
+    }) => setVideoSaved(userId, assetId, saved),
+    onSuccess: (saved, variables) => {
+      queryClient.setQueryData(
+        savedVideoKey(variables.userId, variables.assetId),
+        saved,
+      );
+      void queryClient.invalidateQueries({
+        queryKey: savedVideosKey(variables.userId),
+      });
+    },
+    onError: () =>
+      Alert.alert("Save failed", "Please check your connection and try again."),
+  });
+  const savingThis =
+    saveMutation.isPending && saveMutation.variables?.assetId === assetId;
+  const saveIsBusy = !userId || isSavedFetching || savingThis;
+
+  return (
+    <Pressable
+      accessibilityLabel={
+        isSavedError
+          ? "Retry loading saved status"
+          : isSaved
+            ? "Remove from Library"
+            : "Save to Library"
+      }
+      accessibilityRole="button"
+      accessibilityState={{
+        busy: isSavedFetching || savingThis,
+        disabled: saveIsBusy,
+        selected: Boolean(isSaved),
+      }}
+      disabled={saveIsBusy}
+      onPress={() => {
+        if (isSavedError) void refetchSaved();
+        else
+          saveMutation.mutate({
+            userId,
+            assetId,
+            saved: !isSaved,
+          });
+      }}
+      style={styles.actionButton}
+    >
+      <View style={[styles.actionIcon, isSaved && styles.savedActionIcon]}>
+        {isSavedFetching || savingThis ? (
+          <ActivityIndicator
+            color={isSaved ? "#000000" : "#FFFFFF"}
+            size="small"
+          />
+        ) : (
+          <Ionicons
+            color={isSaved ? "#000000" : "#FFFFFF"}
+            name={
+              isSavedError
+                ? "refresh-outline"
+                : isSaved
+                  ? "bookmark"
+                  : "bookmark-outline"
+            }
+            size={25}
+          />
+        )}
+      </View>
+      <Text style={styles.actionLabel}>
+        {isSavedError
+          ? "Retry"
+          : savingThis
+            ? "Saving…"
+            : isSaved
+              ? "Saved"
+              : "Save"}
+      </Text>
+    </Pressable>
+  );
+}
+
 function ShortPage({
   appIsActive,
   isActive,
@@ -99,7 +212,6 @@ function ShortPage({
     typeof short.asset.meta?.title === "string"
       ? short.asset.meta.title.trim()
       : "";
-
   const player = useVideoPlayer(
     {
       uri: `https://stream.mux.com/${short.playbackId}.m3u8`,
@@ -195,10 +307,14 @@ function ShortPage({
         ]}
       >
         <View style={styles.creatorRow}>
-          <View style={styles.creatorAvatar}>
-            <Text style={styles.creatorAvatarText}>P</Text>
-          </View>
-          <Text style={styles.creatorName}>POW TV</Text>
+          <CreatorAvatar
+            creator={short.asset.creator}
+            size={34}
+            style={styles.creatorAvatar}
+          />
+          <Text numberOfLines={1} style={styles.creatorName}>
+            {short.asset.creator?.name || "Creator"}
+          </Text>
         </View>
         {title ? (
           <Text numberOfLines={3} style={styles.title}>
@@ -217,6 +333,7 @@ function ShortPage({
           <ShortAction icon="thumbs-up-outline" label="Like" />
           <ShortAction icon="chatbubble-outline" label="Comments" />
           <ShortAction icon="arrow-redo-outline" label="Share" />
+          <ShortSaveAction assetId={short.asset.id} />
         </View>
       ) : null}
     </View>
@@ -245,12 +362,9 @@ export default function ShortsScreen() {
     queryKey: ["shorts", SHORTS_ASPECT_RATIO, PAGE_SIZE],
     initialPageParam: 1,
     queryFn: async ({ pageParam }): Promise<ShortsPage> => ({
-      videos: await getVideoAssets(
-        pageParam,
-        PAGE_SIZE,
-        undefined,
-        SHORTS_ASPECT_RATIO,
-      ),
+      videos: await getVideoAssets(pageParam, PAGE_SIZE, {
+        aspectRatio: SHORTS_ASPECT_RATIO,
+      }),
       nextPage: pageParam + 1,
     }),
     getNextPageParam: (lastPage) =>
@@ -479,20 +593,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   creatorAvatar: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
     marginRight: 9,
-    backgroundColor: "#F5A100",
-  },
-  creatorAvatarText: {
-    color: "#000000",
-    fontFamily: "Sora_700Bold",
-    fontSize: 15,
   },
   creatorName: {
+    flexShrink: 1,
     color: "#FFFFFF",
     fontFamily: "Sora_700Bold",
     fontSize: 14,
@@ -524,6 +628,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.55)",
+  },
+  savedActionIcon: {
+    backgroundColor: "#F5A100",
   },
   actionLabel: {
     marginTop: 4,
